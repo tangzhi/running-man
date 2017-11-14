@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Running-Man</title>
+  <meta name="fragment" content="!">
+  <script type="text/javascript" src="node_modules/onsenui/js/onsenui.js" charset="utf-8"></script>
+  <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js" charset="utf-8"></script>
+  <script type="text/javascript" src="js/app.js" charset="utf-8"></script>
+  <script type="text/javascript" src="js/controllers.js" charset="utf-8"></script>
+  <script type="text/javascript" src="js/services.js" charset="utf-8"></script>
+  <script type="text/javascript" src="js/store.js" charset="utf-8"></script>
+
+  <link type="text/css" rel="stylesheet" href="node_modules/onsenui/css/onsenui.css"/>
+  <link type="text/css" rel="stylesheet" href="node_modules/onsenui/css/onsen-css-components.css"/>
+  <link type="text/css" rel="stylesheet" href="assets/css/style.css"/>
+</head>
+<body>
+  <ons-splitter>
+    <ons-splitter-side page = "templates/menu.html" id="menu" side="left" width="280px" collapse swipeable>
+    </ons-splitter-side>
+    <ons-splitter-content>
+      <ons-navigator id="navi" page="templates/home.html"></ons-navigator>
+    </ons-splitter-content>
+  </ons-splitter>
+</body>
+</html>

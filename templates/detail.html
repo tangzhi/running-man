@@ -1,0 +1,162 @@
+<ons-page id="detailPage">
+  <ons-toolbar>
+    <div class="left">
+        <ons-back-button></ons-back-button>
+    </div>
+    <div class="center">待整理项|动作</div>
+    <div class="right">
+      <ons-toolbar-button>
+        <ons-icon icon="ion-android-done"></ons-icon>
+      </ons-toolbar-button>
+    </div>
+  </ons-toolbar>
+
+  <ons-list>
+    <ons-list-item modifier="nodivider">
+      <label class="left">
+        <ons-checkbox></ons-checkbox>
+      </label>
+      <div class="center">
+        <ons-input id="stuff" type="text" modifier="transparent" maxlength="60" value="去超市购买蔬菜"></ons-input>
+      </div>
+    </ons-list-item>
+    <ons-list-item modifier="longdivider">
+      <ons-if platform="ios other" style="width:100%">
+        <div class="segment" style="width: 98%; margin: 0 auto;">
+          <div class="segment__item">
+            <input type="radio" value="a" class="segment__input" name="segment-a" checked>
+            <button class="segment__button">属性</button>
+          </div>
+          <div class="segment__item">
+            <input type="radio" value="d" class="segment__input" name="segment-a">
+            <button class="segment__button">描述</button>
+          </div>
+          <div class="segment__item" style="display:none">
+            <input type="radio" value="t" class="segment__input" name="segment-a">
+            <button class="segment__button">附件</button>
+          </div>
+        </div>
+      </ons-if>
+      <ons-if platform="android" style="width:100%">
+        <div class="segment segment--material" style="width: 98%; margin: 0 auto;">
+          <div class="segment__item segment--material__item">
+            <input type="radio" value="a" class="segment__input segment--material__input" name="segment-b" checked>
+            <button class="segment__button segment--material__button">属性</button>
+          </div>
+          <div class="segment__item segment--material__item">
+            <input type="radio" value="d" class="segment__input segment--material__input" name="segment-b">
+            <button class="segment__button segment--material__button">描述</button>
+          </div>
+          <div class="segment__item segment--material__item" style="display:none">
+            <input type="radio" value="t" class="segment__input segment--material__input" name="segment-b">
+            <button class="segment__button segment--material__button">附件</button>
+          </div>
+        </div>
+      </ons-if>
+
+    </ons-list-item>
+  </ons-list>
+
+  <ons-list id="attributes">
+
+    <ons-list-item tappable modifier="nodivider">
+      <ons-list style="width: 100%" modifier="inset">
+        <ons-list-header>处理方式：</ons-list-header>
+        <ons-list-item tappable>
+          <label class="left">
+            <ons-radio name="color" input-id="radio-1" checked></ons-radio>
+          </label>
+          <label for="radio-1" class="center">
+            尽快处理
+          </label>
+        </ons-list-item>
+        <ons-list-item tappable>
+          <label class="left">
+            <ons-radio name="color" input-id="radio-2"></ons-radio>
+          </label>
+          <label for="radio-2" class="center">
+            定时提醒
+          </label>
+          <label class="right">
+            无
+            <ons-icon size="30px" style="color: grey; padding-left: 4px" icon="md-chevron-right"></ons-icon>
+          </label>
+        </ons-list-item>
+        <ons-list-item tappable>
+          <label class="left">
+            <ons-radio name="color" input-id="radio-3"></ons-radio>
+          </label>
+          <label for="radio-3" class="center">
+            委托他人
+          </label>
+          <label class="right">
+            无
+            <ons-icon size="30px" style="color: grey; padding-left: 4px" icon="md-chevron-right"></ons-icon>
+          </label>
+        </ons-list-item>
+        <ons-list-item tappable>
+          <label class="left">
+            <ons-radio name="color" input-id="radio-4"></ons-radio>
+          </label>
+          <label for="radio-4" class="center">
+            将来计划
+          </label>
+        </ons-list-item>
+      </ons-list>
+    </ons-list-item>
+
+    <ons-list-item tappable>
+      <label class="center">项目</label>
+      <label class="right">
+        <ons-select id="choose-project" style="border: none;box-shadow: none;width: 100%">
+          <option value="-1">无</option>
+          <option value="1">杂事</option>
+          <option value="2">个人事务</option>
+          <option value="3">工作事务</option>
+        </ons-select>
+      </label>
+    </ons-list-item>
+    <ons-list-item tappable>
+      <label class="center">场景</label>
+      <label class="right">
+        <ons-select id="choose-context" style="border: none;box-shadow: none;width: 100%">
+          <option value="-1">无</option>
+          <option value="1">在家</option>
+          <option value="2">在办公室</option>
+          <option value="3">外出</option>
+          <option value="4">电话</option>
+          <option value="5">电脑</option>
+        </ons-select>
+      </label>
+    </ons-list-item>
+    <!--
+    <ons-list-item tappable>
+      <label class="center">到期</label>
+      <label class="right">
+        <input id="endtime" type="datetime-local"
+        style="background: transparent;border: none;box-shadow: none;display: block;height: 100%;width: 100%;"/>
+      </label>
+    </ons-list-item>
+    <ons-list-item tappable>
+      <label class="center">重复</label>
+      <label class="right">
+        无
+      </label>
+    </ons-list-item>
+    -->
+    <ons-list-item tappable modifier="nodivider">
+      <ons-button modifier="large">删除</ons-button>
+    </ons-list-item>
+  </ons-list>
+
+  <ons-list  style="height:90%" id="detail">
+    <ons-list-item style="height:100%">
+      <div class="list-item__center">
+        <textarea style="width:100%; height:100%" class="textarea textarea--transparent" row=24 placeholder="写点什么吧..."></textarea>
+      </div>
+    </ons-list-item>
+  </ons-list>
+
+
+
+  </ons-page>

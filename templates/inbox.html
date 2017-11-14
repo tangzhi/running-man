@@ -1,0 +1,30 @@
+<ons-page id="inboxPage">
+    <ons-toolbar>
+      <div class="left">
+        <ons-back-button>首页</ons-back-button>
+      </div>
+      <div class="center">收集箱</div>
+      <div class="right">
+        <ons-toolbar-button>
+          <ons-icon icon="ion-ios-plus-empty, material:md-plus"></ons-icon>
+        </ons-toolbar-button>
+      </div>
+    </ons-toolbar>
+
+    <div class="content" style="bottom: 59px">
+      <ons-list id="inbox-list" style="">
+        <ons-list-header>点击条目，进行整理...</ons-list-header>
+      </ons-list>
+    </div>
+    <ons-list id="inbox-input" style="position: absolute;bottom: 0px;left: 0px;height: 60px;width:100%;">
+      <ons-list-item modifier="nodivider">
+        <label class="center">
+          <ons-input id="stuff" type="text" modifier="transparent" maxlength="60" placeholder="准备记录点什么?" float></ons-input>
+        </label>
+        <label class="right">
+          <ons-button modifier="outline" id="addItem">OK</ons-button>
+        </label>
+      </ons-list-item>
+    </ons-list>
+
+  </ons-page>

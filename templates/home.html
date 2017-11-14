@@ -1,0 +1,50 @@
+<ons-page id="homePage">
+  <ons-toolbar>
+    <div class="left">
+      <ons-toolbar-button onclick="menu.open()">
+        <ons-icon icon="md-menu"></ons-icon>
+      </ons-toolbar-button>
+    </div>
+    <div class="center">
+      逐日
+    </div>
+  </ons-toolbar>
+  <div class="ons-grids">
+    <a class="ons-grid large" id="inbox" onclick="navi.pushPage('templates/inbox.html')">
+      <div class="ons-grid__icon">
+        <ons-icon icon="ion-ios-box-outline" size="60px"></ons-icon>
+      </div>
+      <p class="ons-grid__label">收集箱</p>
+    </a>
+    <a class="ons-grid">
+      <div class="ons-grid__icon">
+        <ons-icon icon="ion-ios-star-outline" size="60px"></ons-icon>
+      </div>
+      <p class="ons-grid__label">重要</p>
+    </a>
+    <a class="ons-grid">
+      <div class="ons-grid__icon">
+        <ons-icon icon="ion-ios-keypad-outline" size="60px"></ons-icon>
+      </div>
+      <p class="ons-grid__label">项目</p>
+    </a>
+    <a class="ons-grid">
+      <div class="ons-grid__icon">
+        <ons-icon icon="ion-ios-glasses-outline" size="60px"></ons-icon>
+      </div>
+      <p class="ons-grid__label">回顾</p>
+    </a>
+    <a class="ons-grid">
+      <div class="ons-grid__icon">
+        <ons-icon icon="ion-ios-infinite-outline" size="60px"></ons-icon>
+      </div>
+      <p class="ons-grid__label">将来</p>
+    </a>
+    <a class="ons-grid large" onclick="navi.pushPage('templates/schedule.html')">
+      <div class="ons-grid__icon">
+          <ons-icon icon="ion-ios-alarm-outline" size="60px"></ons-icon>
+      </div>
+      <p class="ons-grid__label">日程表</p>
+    </a>
+  </div>
+</ons-page>
