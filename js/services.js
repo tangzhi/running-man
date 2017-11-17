@@ -24,7 +24,7 @@ RunningMan.services = {
     },
 
     remove: function remove(event) {
-      console.log(event);
+      console.log($(event.target).parents('ons-list-item')[0].primaryKey);
     },
 
     clear: function clear() {
