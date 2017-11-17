@@ -14,7 +14,7 @@ RunningMan.stores = {
     }
   },
 
-  newTask: function simple(title) {
+  newTask: function simple(title, cb) {
     var tx = this.db.transaction('tasks', 'readwrite');
     var store = tx.objectStore('tasks');
     var def = { mode: -1, project: -1, context: -1, state: 0 };
@@ -27,7 +27,15 @@ RunningMan.stores = {
     def.in_date = new Date();
     request = store.put(def);
     this.onError(tx, request);
-    request.onCom
+    request.onsuccess = function ok(e) {
+      cb({ _id: e.target.result, title: title, end_date: def.end_date });
+    };
+  },
+
+  removeTask: function rm(id) {
+    var tx = this.db.transaction('tasks', 'readwrite');
+    var store = tx.objectStore('tasks');
+    store.delete(id);
   },
 
   extend: function fun(obj) {
@@ -54,6 +62,20 @@ RunningMan.stores = {
     return obj;
   },
 
+  queryTask: function query(id, cb) {
+    var tx = this.db.transaction('tasks');
+    var store = tx.objectStore('tasks');
+    var request = store.openCursor(id);
+    var that = this;
+    request.onsuccess = function finded() {
+      var cursor = request.result;
+      if (cursor) {
+        cb(that.extend({ _id: cursor.primaryKey }, cursor.value));
+      }
+    };
+  },
+
+  // 查询收件箱
   queryInbox: function query(iter) {
     var tx = this.db.transaction('tasks');
     var store = tx.objectStore('tasks');

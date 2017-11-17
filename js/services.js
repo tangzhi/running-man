@@ -8,7 +8,7 @@ RunningMan.services = {
           '<ons-checkbox></ons-checkbox>' +
         '</label>' +
         '<div class="center" onclick="navi.pushPage(\'templates/detail.html\',' +
-        ' {source: 0})">' +
+        ' {data: {source: 0, taskId: ' + data._id + '}})">' +
           '<span class="list-item__title" style="font-size: 16px;">' + data.title + '</span>' +
           (data.end_date ?
             ('<span class="list-item__subtitle" style="text-align: right;font-size: 12px;">截止于' +
@@ -24,7 +24,11 @@ RunningMan.services = {
     },
 
     remove: function remove(event) {
-      console.log($(event.target).parents('ons-list-item')[0].primaryKey);
+      $(event.target).parents('ons-list-item').each(function removeItem() {
+        RunningMan.stores.removeTask(this.primaryKey);
+        this.primaryKey = null;
+        this.remove();
+      });
     },
 
     clear: function clear() {

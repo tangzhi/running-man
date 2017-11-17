@@ -10,11 +10,10 @@ RunningMan.controllers = {
     RunningMan.stores.queryInbox(RunningMan.services.inbox.create);
 
     $('#addItem').on('click', function click() {
-      RunningMan.stores.newTask(page.querySelector('#stuff').value);
-      RunningMan.services.inbox.clear();
-      RunningMan.stores.queryInbox(RunningMan.services.inbox.create);
-
-      $('#stuff').value = '';
+      RunningMan.stores.newTask(page.querySelector('#stuff').value,
+        RunningMan.services.inbox.create);
+      console.log($('#stuff'));
+      $('#stuff').val('');
     });
 
     $('ons-toolbar ons-toolbar-button ons-icon').on('click', function cl() {
@@ -27,7 +26,9 @@ RunningMan.controllers = {
   },
 
   detailPage: function init(page) {
-    var source = page.source ? page.source : 0;
+    var showTaskDetail;
+    // 设置标题
+    var source = page.data.source ? page.data.source : 0;
     var back;
     var title;
     switch (source) {
@@ -42,10 +43,12 @@ RunningMan.controllers = {
     $('ons-toolbar span.back-button__label').textContent = back;
     $('ons-toolbar div.center').textContent = title;
 
+    // 详细页 默认不显示
     $('#detail').css('display', 'none');
 
+    // 属性页与详细页 切换事件
     $('input[type="radio"]').on('change', function change() {
-      console.log($('input[type="radio"]:checked').val());
+      // console.log($('input[type="radio"]:checked').val());
       switch ($('input[type="radio"]:checked').val()) {
         case 'd':
           $('#attributes').css('display', 'none');
@@ -58,8 +61,18 @@ RunningMan.controllers = {
       }
     });
 
+    // 选择 项目
     $('#choose-project').on('change', function change() {
 
     });
+
+    showTaskDetail = function showDetail(id) {
+      RunningMan.stores.queryTask(id);
+    };
+
+    // 如果有 任务_id, 则显示任务信息
+    if (page.data.taskId) {
+      showTaskDetail(page.data.taskId);
+    }
   }
 };
