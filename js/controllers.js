@@ -25,14 +25,19 @@ RunningMan.controllers = {
     });
   },
 
+  expirePage: function init(page) {
+    
+  },
+
   detailPage: function init(page) {
+    var theTask = {}; // 当前任务
     var showTaskDetail;
     // 设置标题
-    var source = page.data.source ? page.data.source : 0;
+    var source = page.data.source ? page.data.source : 'inbox';
     var back;
     var title;
     switch (source) {
-      case 0:
+      case -1:  // 来自收件箱
         back = '收集箱';
         title = '待整理项';
         break;
@@ -66,13 +71,43 @@ RunningMan.controllers = {
 
     });
 
-    showTaskDetail = function showDetail(id) {
-      RunningMan.stores.queryTask(id);
+    $('ons-toolbar-button').on('click', function ok() {
+      var id = theTask._id;
+      theTask.state = $('input[type="checkbox"]').is(':checked') ? 1 : 0;
+      theTask.title = $('#detail_title').val();
+      theTask.detail = $('#desc').val() || '';
+      theTask.mode = $('input[name="mode"]:checked').val() || -1;
+      theTask.project = $('#choose-project').val();
+      theTask.context = $('#choose-context').val();
+      delete theTask._id;
+      console.log(theTask);
+      RunningMan.stores.saveTask(id, theTask);
+
+      // 修改前一个页面的显示
+      switch (source) {
+        case -1: // 来自收件箱
+          RunningMan.services.inbox.clear();
+          RunningMan.stores.queryInbox(RunningMan.services.inbox.create);
+          break;
+        default:
+      }
+      //
+      navi.popPage();
+    });
+
+    // 显示明细
+    showTaskDetail = function show(task) {
+      theTask = task;
+      $('#detail_title').val(theTask.title);
+      $('#desc').val(theTask.detail || '');
+      $('input[name="mode"][value="' + theTask.mode + '"]').prop('checked', true);
+      $('#choose-project').val(theTask.project);
+      $('#choose-context').val(theTask.context);
     };
 
     // 如果有 任务_id, 则显示任务信息
     if (page.data.taskId) {
-      showTaskDetail(page.data.taskId);
+      RunningMan.stores.queryTask(page.data.taskId, showTaskDetail);
     }
   }
 };

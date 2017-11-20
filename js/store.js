@@ -32,6 +32,13 @@ RunningMan.stores = {
     };
   },
 
+  saveTask: function save(id, task) {
+    var tx = this.db.transaction('tasks', 'readwrite');
+    var store = tx.objectStore('tasks');
+    var request = store.put(task, id);
+    this.onError(tx, request);
+  },
+
   removeTask: function rm(id) {
     var tx = this.db.transaction('tasks', 'readwrite');
     var store = tx.objectStore('tasks');
@@ -70,9 +77,17 @@ RunningMan.stores = {
     request.onsuccess = function finded() {
       var cursor = request.result;
       if (cursor) {
+        console.log(cursor.value);
         cb(that.extend({ _id: cursor.primaryKey }, cursor.value));
       }
     };
+  },
+
+  // 查询过期任务
+  queryExpire: function query(cb) {
+    var tx = this.db.transaction('tasks');
+    var store = tx.objectStore('tasks');
+
   },
 
   // 查询收件箱
