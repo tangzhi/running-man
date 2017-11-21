@@ -83,11 +83,96 @@ RunningMan.stores = {
     };
   },
 
+  // 查询将来计划任务
+  queryFuture: function query(cb) {
+    var tx = this.db.transaction('tasks');
+    var store = tx.objectStore('tasks');
+    var index = store.index('by_mode');
+    var request = index.openCursor(IDBKeyRange.only([3, 0]));
+    var that = this;
+    request.onsuccess = function success() {
+      var cursor = request.result;
+      if (cursor) {
+        cb(that.extend({ _id: cursor.primaryKey }, cursor.value));
+        cursor.continue();
+      }
+    };
+  },
+
+  // 查询某天任务
+  queryDayTask: function query(day, cb) {
+    var tx = this.db.transaction('tasks');
+    var store = tx.objectStore('tasks');
+    var index = store.index('by_end_date');
+    var today = new Date();
+    var theDay = today.setDate(today.getDate() + day) && today;
+    console.log(theDay);
+    var request = index.openCursor(IDBKeyRange.only(
+        [RunningMan.utils.dateFormat(theDay, 'YYYY-MM-dd'), 0]));
+    var that = this;
+    request.onsuccess = function success() {
+      var cursor = request.result;
+      if (cursor) {
+        cb(that.extend({ _id: cursor.primaryKey }, cursor.value));
+        cursor.continue();
+      }
+    };
+  },
+
+  // 查询尽快处理任务
+  queryNextTask: function query(cb) {
+    var tx = this.db.transaction('tasks');
+    var store = tx.objectStore('tasks');
+    var index = store.index('by_mode');
+    var request = index.openCursor(IDBKeyRange.only([0, 0]));
+    var that = this;
+    request.onsuccess = function success() {
+      var cursor = request.result;
+      if (cursor) {
+        cb(that.extend({ _id: cursor.primaryKey }, cursor.value));
+        cursor.continue();
+      }
+    };
+  },
+
   // 查询过期任务
   queryExpire: function query(cb) {
     var tx = this.db.transaction('tasks');
     var store = tx.objectStore('tasks');
+    var index = store.index('by_end_date');
+    var request = index.openCursor(IDBKeyRange.lowerBound(
+        [RunningMan.utils.dateFormat(new Date(), 'YYYY-MM-dd'), 0]));
+    var that = this;
+    request.onsuccess = function success() {
+      var cursor = request.result;
+      if (cursor) {
+        if (cursor.value.state === 0) {
+          cb(that.extend({ _id: cursor.primaryKey }, cursor.value));
+        }
+        cursor.continue();
+      }
+    };
+  },
 
+  // 查询将来计划任务
+  queryComing: function query(cb) {
+    var tx = this.db.transaction('tasks');
+    var store = tx.objectStore('tasks');
+    var index = store.index('by_end_date');
+    var today = new Date();
+    var theDay = today.setDate(today.getDate() + 3) && today;
+    var request = index.openCursor(IDBKeyRange.upperBound(
+        [RunningMan.utils.dateFormat(theDay, 'YYYY-MM-dd'), 0]));
+    var that = this;
+    request.onsuccess = function success() {
+      var cursor = request.result;
+      if (cursor) {
+        if (cursor.value.state === 0) {
+          cb(that.extend({ _id: cursor.primaryKey }, cursor.value));
+        }
+        cursor.continue();
+      }
+    };
   },
 
   // 查询收件箱
@@ -95,7 +180,7 @@ RunningMan.stores = {
     var tx = this.db.transaction('tasks');
     var store = tx.objectStore('tasks');
     var index = store.index('by_mode');
-    var request = index.openCursor(IDBKeyRange.only(-1));
+    var request = index.openCursor(IDBKeyRange.only([-1, 0]));  // 收件箱  未完成
     var that = this;
     request.onsuccess = function success() {
       var cursor = request.result;
@@ -115,9 +200,9 @@ RunningMan.stores = {
       if (event.oldVersion < 1) {
         // Version 1 is the first version of the database.
         store = that.db.createObjectStore('tasks', { autoIncrement: true });
-        ['next_date', 'mode', 'project', 'context', 'state']
+        ['end_date', 'mode']
           .forEach(function addIndex(item) {
-            store.createIndex('by_' + item, item);
+            store.createIndex('by_' + item, [item, 'state']);
           });
 
         store = that.db.createObjectStore('project', { autoIncrement: true });

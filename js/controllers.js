@@ -25,8 +25,36 @@ RunningMan.controllers = {
     });
   },
 
-  expirePage: function init(page) {
-    
+  futurePage: function init() {
+    RunningMan.stores.queryComing(1, function create(data) {
+      return RunningMan.services.schedule.createItem(data, 0, '#comming-list');
+    });
+
+    RunningMan.stores.queryFuture(1, function create(data) {
+      return RunningMan.services.schedule.createItem(data, 0, '#future-list');
+    });
+  },
+
+  tomorrowPage: function init() {
+    RunningMan.stores.queryDayTask(1, function create(data) {
+      return RunningMan.services.schedule.createItem(data, 0, '#tomorrow-list');
+    });
+  },
+
+  todayPage: function init() {
+    RunningMan.stores.queryNextTask(function create(data) {
+      return RunningMan.services.schedule.createItem(data, 0, '#next-list');
+    });
+
+    RunningMan.stores.queryDayTask(0, function create(data) {
+      return RunningMan.services.schedule.createItem(data, 0, '#today-list');
+    });
+  },
+
+  expirePage: function init() {
+    RunningMan.stores.queryExpire(function create(data) {
+      return RunningMan.services.schedule.createItem(data, 0, '#expire-list');
+    });
   },
 
   detailPage: function init(page) {
