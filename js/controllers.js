@@ -17,7 +17,8 @@ RunningMan.controllers = {
     });
 
     $('ons-toolbar ons-toolbar-button ons-icon').on('click', function cl() {
-      console.log($('#inbox-list ons-list-item div.right ons-icon'));
+      // console.log($('#inbox-list ons-list-item div.right ons-icon'));
+      RunningMan.stores.removeDatabase();
     });
 
     $('#inbox-list').on('click', 'ons-list-item div.right ons-icon', function cl(event) {
@@ -30,7 +31,7 @@ RunningMan.controllers = {
       return RunningMan.services.schedule.createItem(data, 0, '#comming-list');
     });
 
-    RunningMan.stores.queryFuture(1, function create(data) {
+    RunningMan.stores.queryFuture(function create(data) {
       return RunningMan.services.schedule.createItem(data, 0, '#future-list');
     });
   },
@@ -61,9 +62,10 @@ RunningMan.controllers = {
     var theTask = {}; // 当前任务
     var showTaskDetail;
     // 设置标题
-    var source = page.data.source ? page.data.source : 'inbox';
+    var source = page.data.source ? page.data.source : -1;
     var back;
     var title;
+    console.log('source:' + source);
     switch (source) {
       case -1:  // 来自收件箱
         back = '收集箱';
@@ -80,6 +82,24 @@ RunningMan.controllers = {
     $('#detail').css('display', 'none');
 
     // 属性页与详细页 切换事件
+    var selectAttrPage = function sel(type) {
+      $('input[name="' + type + '"]').on('change', function change() {
+        // console.log($('input[type="radio"]:checked').val());
+        switch ($('input[name="' + type + '"]:checked').val()) {
+          case 'd':
+            $('#attributes').css('display', 'none');
+            $('#detail').css('display', '');
+            break;
+          case 'a':
+          default:
+            $('#attributes').css('display', '');
+            $('#detail').css('display', 'none');
+        }
+      });
+    };
+    selectAttrPage('segment-a');
+    selectAttrPage('segment-b');
+    /*
     $('input[type="radio"]').on('change', function change() {
       // console.log($('input[type="radio"]:checked').val());
       switch ($('input[type="radio"]:checked').val()) {
@@ -92,11 +112,17 @@ RunningMan.controllers = {
           $('#attributes').css('display', '');
           $('#detail').css('display', 'none');
       }
-    });
+    });*/
 
     // 选择 项目
     $('#choose-project').on('change', function change() {
 
+    });
+
+    // 选择 处理方式
+    $('input[name="mode"]').on('click', function change() {
+      console.log($('input[name="mode"]:checked').val());
+      return false;
     });
 
     $('ons-toolbar-button').on('click', function ok() {
@@ -104,7 +130,8 @@ RunningMan.controllers = {
       theTask.state = $('input[type="checkbox"]').is(':checked') ? 1 : 0;
       theTask.title = $('#detail_title').val();
       theTask.detail = $('#desc').val() || '';
-      theTask.mode = $('input[name="mode"]:checked').val() || -1;
+      theTask.mode = $('input[name="mode"]:checked').val() ?
+        parseInt($('input[name="mode"]:checked').val(), 10) : -1;
       theTask.project = $('#choose-project').val();
       theTask.context = $('#choose-context').val();
       delete theTask._id;

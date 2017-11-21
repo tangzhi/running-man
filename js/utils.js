@@ -6,7 +6,6 @@ RunningMan.utils = {
   dateFormat: function format(dt, fmt) {
     var k;
     var result = fmt;
-    console.log(dt);
     var o = {
       'M+': dt.getMonth() + 1, // 月份
       'd+': dt.getDate(), // 日
@@ -16,7 +15,6 @@ RunningMan.utils = {
       'q+': Math.floor((dt.getMonth() + 3) / 3), // 季度
       'S': dt.getMilliseconds() // 毫秒
     };
-    console.log(o);
     if (/(y+)/.test(fmt)) {
       result = result.replace(RegExp.$1, (dt.getFullYear() + '').substr(4 - RegExp.$1.length));
     }

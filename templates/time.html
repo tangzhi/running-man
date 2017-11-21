@@ -1,0 +1,80 @@
+<ons-page id="timePage">
+
+  <ons-list>
+    <ons-list-header></ons-list-header>
+    <ons-list id="today-list">
+      <ons-list-item tappable>
+        <label class="center" for="alerttime">
+          时间
+        </label>
+        <div class="right">
+          <input id="alerttime" type="datetime-local" ></input>
+        </div>
+      </ons-list-item>
+      <ons-list-item tappable>
+        <label class="center" for="repeat-switch">
+          重复
+        </label>
+        <div class="right">
+          <ons-switch input-id="repeat-switch" checked="false"></ons-switch>
+        </div>
+      </ons-list-item>
+    </ons-list>
+    <ons-list-header>重复设置</ons-list-header>
+    <ons-list id="next-list">
+      <ons-list-item tappable>
+        <label class="center">
+          间隔
+        </label>
+        <div class="right right-label">
+          5 周
+          <ons-icon size="30px" style="color: grey; padding-left: 15px" icon="ion-ios-trash-outline, material:md-delete"></ons-icon>
+          <ons-icon size="30px" style="color: grey; padding-left: 15px" icon="ion-ios-trash-outline, material:md-delete"></ons-icon>
+        </div>
+      </ons-list-item>
+      <ons-list-item>
+        <ons-if platform="ios other" style="width:100%">
+          <div class="segment" style="width: 98%; margin: 0 auto;">
+            <div class="segment__item">
+              <input type="radio" value="a" class="segment__input" name="segment-a" checked>
+              <button class="segment__button">天</button>
+            </div>
+            <div class="segment__item">
+              <input type="radio" value="d" class="segment__input" name="segment-a">
+              <button class="segment__button">周</button>
+            </div>
+            <div class="segment__item">
+              <input type="radio" value="t" class="segment__input" name="segment-a">
+              <button class="segment__button">月</button>
+            </div>
+          </div>
+        </ons-if>
+        <ons-if platform="android" style="width:100%">
+          <div class="segment segment--material" style="width: 98%; margin: 0 auto;">
+            <div class="segment__item segment--material__item">
+              <input type="radio" value="a" class="segment__input segment--material__input" name="segment-b" checked>
+              <button class="segment__button segment--material__button">天</button>
+            </div>
+            <div class="segment__item segment--material__item">
+              <input type="radio" value="d" class="segment__input segment--material__input" name="segment-b">
+              <button class="segment__button segment--material__button">周</button>
+            </div>
+            <div class="segment__item segment--material__item">
+              <input type="radio" value="t" class="segment__input segment--material__input" name="segment-b">
+              <button class="segment__button segment--material__button">月</button>
+            </div>
+          </div>
+        </ons-if>
+      </ons-list-item>
+      <ons-list-item tappable>
+        <label class="center">
+          下一个提醒
+        </label>
+        <div class="right right-label">
+          2018-12-12 17:30
+        </div>
+      </ons-list-item>
+    </ons-list>
+  </ons-list>
+
+</ons-page>

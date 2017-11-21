@@ -88,11 +88,12 @@ RunningMan.stores = {
     var tx = this.db.transaction('tasks');
     var store = tx.objectStore('tasks');
     var index = store.index('by_mode');
-    var request = index.openCursor(IDBKeyRange.only([3, 0]));
+    var request = index.openCursor(IDBKeyRange.only([3, 0])); // 尽快处理  未完成
     var that = this;
     request.onsuccess = function success() {
       var cursor = request.result;
       if (cursor) {
+        console.log(cursor.value);
         cb(that.extend({ _id: cursor.primaryKey }, cursor.value));
         cursor.continue();
       }
@@ -106,7 +107,6 @@ RunningMan.stores = {
     var index = store.index('by_end_date');
     var today = new Date();
     var theDay = today.setDate(today.getDate() + day) && today;
-    console.log(theDay);
     var request = index.openCursor(IDBKeyRange.only(
         [RunningMan.utils.dateFormat(theDay, 'YYYY-MM-dd'), 0]));
     var that = this;
@@ -124,11 +124,12 @@ RunningMan.stores = {
     var tx = this.db.transaction('tasks');
     var store = tx.objectStore('tasks');
     var index = store.index('by_mode');
-    var request = index.openCursor(IDBKeyRange.only([0, 0]));
+    var request = index.openCursor(IDBKeyRange.only([0, 0])); // 尽快处理  未完成
     var that = this;
     request.onsuccess = function success() {
       var cursor = request.result;
       if (cursor) {
+        console.log(cursor.value);
         cb(that.extend({ _id: cursor.primaryKey }, cursor.value));
         cursor.continue();
       }
@@ -228,5 +229,16 @@ RunningMan.stores = {
 
   closeDatabase: function closeDB() {
     this.db.close();
+  },
+
+  removeDatabase: function removeDB() {
+    var that = this;
+    this.db.close();
+    indexedDB.deleteDatabase('running-man')
+      .onsuccess = function success() {
+        that.db = null;
+        console.log('removeDatabase db deleted.');
+      };
+    console.log('removeDatabase ...');
   }
 };
