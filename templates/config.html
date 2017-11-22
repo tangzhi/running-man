@@ -1,0 +1,24 @@
+<ons-page id="configPage">
+
+  <ons-list id="items">
+    <ons-list-item tappable onclick="selectitem('xxx')">
+      <label class="center">无(非项目)</label>
+    </ons-list-item>
+    <ons-list-item tappable onclick="selectitem('xxx')">
+      <label class="center">杂项</label>
+    </ons-list-item>
+    <ons-list-item tappable onclick="navi.pushPage('templates/config.html', {data: {}})">
+      <label class="center">个人</label>
+      <label class="right">
+        <ons-icon size="30px" style="color: grey; padding-left: 4px" icon="md-chevron-right"></ons-icon>
+      </label>
+    </ons-list-item>
+    <ons-list-item tappable onclick="navi.pushPage('templates/config.html', {data: {}})">
+      <label class="center">工作</label>
+      <label class="right">
+        <ons-icon size="30px" style="color: grey; padding-left: 4px" icon="md-chevron-right"></ons-icon>
+      </label>
+    </ons-list-item>
+  </ons-list>
+
+</ons-page>

@@ -1,4 +1,15 @@
 <ons-page id="timePage">
+  <ons-toolbar>
+    <div class="left">
+        <ons-back-button>动作</ons-back-button>
+    </div>
+    <div class="center">定时提醒</div>
+    <div class="right">
+      <ons-toolbar-button>
+        <ons-icon icon="ion-android-done" id="timePageDone"></ons-icon>
+      </ons-toolbar-button>
+    </div>
+  </ons-toolbar>
 
   <ons-list>
     <ons-list-header></ons-list-header>
@@ -8,7 +19,7 @@
           时间
         </label>
         <div class="right">
-          <input id="alerttime" type="datetime-local" ></input>
+          <input id="alerttime" type="datetime-local"/>
         </div>
       </ons-list-item>
       <ons-list-item tappable>

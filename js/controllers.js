@@ -1,6 +1,11 @@
 RunningMan.controllers = {
   homePage: function init() {
     RunningMan.stores.openDatabase();
+    // navi.on('postpush', function pp(event) {
+    //
+    //   navi.leavePage = event.leavePage;
+    //   navi.enterPage = event.enterPage;
+    // });
   },
 
   menuPage: function initMenuPage() {
@@ -26,9 +31,9 @@ RunningMan.controllers = {
     });
   },
 
-  futurePage: function init() {
-    RunningMan.stores.queryComing(1, function create(data) {
-      return RunningMan.services.schedule.createItem(data, 0, '#comming-list');
+  'futurePage.show': function init() {
+    RunningMan.stores.queryComing(function create(data) {
+      return RunningMan.services.schedule.createItem(data, 0, '#coming-list');
     });
 
     RunningMan.stores.queryFuture(function create(data) {
@@ -36,13 +41,13 @@ RunningMan.controllers = {
     });
   },
 
-  tomorrowPage: function init() {
+  'tomorrowPage.show': function init() {
     RunningMan.stores.queryDayTask(1, function create(data) {
       return RunningMan.services.schedule.createItem(data, 0, '#tomorrow-list');
     });
   },
 
-  todayPage: function init() {
+  'todayPage.show': function init() {
     RunningMan.stores.queryNextTask(function create(data) {
       return RunningMan.services.schedule.createItem(data, 0, '#next-list');
     });
@@ -52,9 +57,28 @@ RunningMan.controllers = {
     });
   },
 
-  expirePage: function init() {
+  'expirePage.show': function init() {
+    var noData = true;
+    var parent = '#expire-list';
+    $('#expire-list').remove('.list-item');
     RunningMan.stores.queryExpire(function create(data) {
-      return RunningMan.services.schedule.createItem(data, 0, '#expire-list');
+      if (noData) {
+        document.querySelector(parent).firstChild.innerHTML = '已经延误';
+        noData = false;
+      }
+      return RunningMan.services.schedule.createItem(data, 0, parent);
+    });
+  },
+
+  timePage: function init(page) {
+    if (page.data && page.data.datetime) {
+      $('#alerttime').val(page.data.datetime);
+    }
+
+    $('ons-page').on('click', '#timePageDone', function ok() {
+      $('#time_title').html($('#alerttime').val().replace('T', ' '));
+      $('input[name="mode"][value="1"]').prop('checked', true);
+      navi.popPage();
     });
   },
 
@@ -65,22 +89,6 @@ RunningMan.controllers = {
     var source = page.data.source ? page.data.source : -1;
     var back;
     var title;
-    console.log('source:' + source);
-    switch (source) {
-      case -1:  // 来自收件箱
-        back = '收集箱';
-        title = '待整理项';
-        break;
-      default:
-        back = '返回';
-        title = '动作';
-    }
-    $('ons-toolbar span.back-button__label').textContent = back;
-    $('ons-toolbar div.center').textContent = title;
-
-    // 详细页 默认不显示
-    $('#detail').css('display', 'none');
-
     // 属性页与详细页 切换事件
     var selectAttrPage = function sel(type) {
       $('input[name="' + type + '"]').on('change', function change() {
@@ -99,34 +107,47 @@ RunningMan.controllers = {
     };
     selectAttrPage('segment-a');
     selectAttrPage('segment-b');
-    /*
-    $('input[type="radio"]').on('change', function change() {
-      // console.log($('input[type="radio"]:checked').val());
-      switch ($('input[type="radio"]:checked').val()) {
-        case 'd':
-          $('#attributes').css('display', 'none');
-          $('#detail').css('display', '');
-          break;
-        case 'a':
-        default:
-          $('#attributes').css('display', '');
-          $('#detail').css('display', 'none');
-      }
-    });*/
+
+    console.log('source:' + source);
+    switch (source) {
+      case -1:  // 来自收件箱
+        back = '收集箱';
+        title = '待整理项';
+        break;
+      default:
+        back = '返回';
+        title = '动作';
+    }
+    console.log('back:%s, title:%s', back, title);
+    $('ons-toolbar span.back-button__label').html(back);
+    $('ons-toolbar div.center').html(title);
+
+    // 详细页 默认不显示
+    $('#detail').css('display', 'none');
 
     // 选择 项目
     $('#choose-project').on('change', function change() {
 
     });
 
+    // 设置 时间
+
     // 选择 处理方式
     $('input[name="mode"]').on('click', function change() {
       console.log($('input[name="mode"]:checked').val());
-      return false;
+      if (parseInt($('input[name="mode"]:checked').val(), 10) === 1) {
+        console.log($('#time_title').html().replace(' ', 'T'));
+        navi.pushPage('templates/time.html',
+          { data: { datetime: $('#time_title').html().replace(' ', 'T') } });
+        return false;
+      } else if (parseInt($('input[name="mode"]:checked').val(), 10) === 2) {
+        return false;
+      }
     });
 
-    $('ons-toolbar-button').on('click', function ok() {
+    $('#detailPageDone').on('click', function ok() {
       var id = theTask._id;
+      var datetime;
       theTask.state = $('input[type="checkbox"]').is(':checked') ? 1 : 0;
       theTask.title = $('#detail_title').val();
       theTask.detail = $('#desc').val() || '';
@@ -134,6 +155,13 @@ RunningMan.controllers = {
         parseInt($('input[name="mode"]:checked').val(), 10) : -1;
       theTask.project = $('#choose-project').val();
       theTask.context = $('#choose-context').val();
+      theTask.end_date = '';
+      theTask.end_time = '';
+      if (theTask.mode === 1) {
+        datetime = $('#time_title').html();
+        theTask.end_date = datetime.split(' ')[0];
+        theTask.end_time = datetime.split(' ')[1];
+      }
       delete theTask._id;
       console.log(theTask);
       RunningMan.stores.saveTask(id, theTask);
@@ -156,6 +184,11 @@ RunningMan.controllers = {
       $('#detail_title').val(theTask.title);
       $('#desc').val(theTask.detail || '');
       $('input[name="mode"][value="' + theTask.mode + '"]').prop('checked', true);
+      if (theTask.mode === 1) {
+        $('#time_title').html(theTask.end_date + ' ' + theTask.end_time);
+      } else {
+        $('#time_title').html('');
+      }
       $('#choose-project').val(theTask.project);
       $('#choose-context').val(theTask.context);
     };

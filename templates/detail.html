@@ -6,7 +6,7 @@
     <div class="center">待整理项|动作</div>
     <div class="right">
       <ons-toolbar-button>
-        <ons-icon icon="ion-android-done"></ons-icon>
+        <ons-icon icon="ion-android-done" id="detailPageDone"></ons-icon>
       </ons-toolbar-button>
     </div>
   </ons-toolbar>
@@ -60,7 +60,7 @@
   <ons-list id="attributes">
 
     <ons-list-item tappable modifier="nodivider">
-      <ons-list style="width: 100%" modifier="inset">
+      <ons-list style="width: 100%" modifier="inset" id="#dealMode">
         <ons-list-header>处理方式：</ons-list-header>
         <ons-list-item tappable>
           <label class="left">
@@ -78,7 +78,9 @@
             定时提醒
           </label>
           <label class="right">
-            2017-12-12 17:30 不重复
+            <label id="time_title" for="radio-2">
+              2017-12-12 17:30 不重复
+            </label>
             <ons-icon size="30px" style="color: grey; padding-left: 4px" icon="md-chevron-right"></ons-icon>
           </label>
         </ons-list-item>

@@ -108,8 +108,9 @@ RunningMan.stores = {
     var today = new Date();
     var theDay = today.setDate(today.getDate() + day) && today;
     var request = index.openCursor(IDBKeyRange.only(
-        [RunningMan.utils.dateFormat(theDay, 'YYYY-MM-dd'), 0]));
+        [RunningMan.utils.dateFormat(theDay, 'yyyy-MM-dd'), 0]));
     var that = this;
+    console.log(RunningMan.utils.dateFormat(theDay, 'yyyy-MM-dd'));
     request.onsuccess = function success() {
       var cursor = request.result;
       if (cursor) {
@@ -141,8 +142,8 @@ RunningMan.stores = {
     var tx = this.db.transaction('tasks');
     var store = tx.objectStore('tasks');
     var index = store.index('by_end_date');
-    var request = index.openCursor(IDBKeyRange.lowerBound(
-        [RunningMan.utils.dateFormat(new Date(), 'YYYY-MM-dd'), 0]));
+    var request = index.openCursor(IDBKeyRange.upperBound(
+        [RunningMan.utils.dateFormat(new Date(), 'yyyy-MM-dd'), 0]));
     var that = this;
     request.onsuccess = function success() {
       var cursor = request.result;
@@ -162,8 +163,8 @@ RunningMan.stores = {
     var index = store.index('by_end_date');
     var today = new Date();
     var theDay = today.setDate(today.getDate() + 3) && today;
-    var request = index.openCursor(IDBKeyRange.upperBound(
-        [RunningMan.utils.dateFormat(theDay, 'YYYY-MM-dd'), 0]));
+    var request = index.openCursor(IDBKeyRange.lowerBound(
+        [RunningMan.utils.dateFormat(theDay, 'yyyy-MM-dd'), 0]));
     var that = this;
     request.onsuccess = function success() {
       var cursor = request.result;
