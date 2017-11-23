@@ -51,12 +51,32 @@ RunningMan.services = {
         ' {data: {source: ' + source + ', taskId: ' + data._id + '}})">' +
           '<span class="list-item__title" style="font-size: 16px;">' + data.title + '</span>' +
           (data.end_date ?
-            ('<span class="list-item__subtitle" style="text-align: right;font-size: 12px;">截止于' +
-            data.end_date + '</span>') : '') +
+            ('<span class="list-item__subtitle" style="text-align: right;font-size: 12px;">到期于' +
+            data.end_date + ' ' + data.end_time + '</span>') : '') +
+        '</div>' +
+      '</ons-list-item>';
+      template.firstChild.primaryKey = data._id;
+      document.querySelector(parent).appendChild(template.firstChild);
+    },
+
+    createTimeItem: function item(data, source, parent) {
+      var template = document.createElement('div');
+      template.innerHTML =
+      '<ons-list-item tappable>' +
+        '<label class="left">' +
+          '<ons-checkbox></ons-checkbox>' +
+        '</label>' +
+        '<div class="center" onclick="navi.pushPage(\'templates/detail.html\',' +
+        ' {data: {source: ' + source + ', taskId: ' + data._id + '}})">' +
+          '<span class="list-item__title" style="font-size: 16px;">' + data.title + '</span>' +
+          (data.end_date ?
+            ('<span class="list-item__subtitle" style="text-align: right;font-size: 12px;">到期于' +
+            data.end_time + '</span>') : '') +
         '</div>' +
       '</ons-list-item>';
       template.firstChild.primaryKey = data._id;
       document.querySelector(parent).appendChild(template.firstChild);
     }
+
   }
 };

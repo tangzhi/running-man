@@ -143,7 +143,7 @@ RunningMan.stores = {
     var store = tx.objectStore('tasks');
     var index = store.index('by_end_date');
     var request = index.openCursor(IDBKeyRange.upperBound(
-        [RunningMan.utils.dateFormat(new Date(), 'yyyy-MM-dd'), 0]));
+        [RunningMan.utils.dateFormat(new Date(), 'yyyy-MM-dd'), 0], true));
     var that = this;
     request.onsuccess = function success() {
       var cursor = request.result;

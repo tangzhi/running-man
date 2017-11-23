@@ -23,7 +23,7 @@ RunningMan.controllers = {
 
     $('ons-toolbar ons-toolbar-button ons-icon').on('click', function cl() {
       // console.log($('#inbox-list ons-list-item div.right ons-icon'));
-      RunningMan.stores.removeDatabase();
+      //
     });
 
     $('#inbox-list').on('click', 'ons-list-item div.right ons-icon', function cl(event) {
@@ -32,38 +32,73 @@ RunningMan.controllers = {
   },
 
   'futurePage.show': function init() {
+    var hasComing = false;
+    var hasFuture = false;
+    $('#coming-list ons-list-item').remove();
+    $('#futurePage ons-list-header:first').hide();
     RunningMan.stores.queryComing(function create(data) {
+      if (!hasComing) {
+        $('#futurePage ons-list-header:first').show();
+        hasComing = true;
+      }
       return RunningMan.services.schedule.createItem(data, 0, '#coming-list');
     });
 
+    $('#future-list ons-list-item').remove();
+    $('#futurePage ons-list-header:last').hide();
     RunningMan.stores.queryFuture(function create(data) {
+      if (!hasFuture) {
+        $('#futurePage ons-list-header:last').show();
+        hasFuture = true;
+      }
       return RunningMan.services.schedule.createItem(data, 0, '#future-list');
     });
   },
 
   'tomorrowPage.show': function init() {
+    var has = false;
+    $('#tomorrow-list ons-list-item').remove();
+    $('#tomorrow-list ons-list-header').hide();
     RunningMan.stores.queryDayTask(1, function create(data) {
-      return RunningMan.services.schedule.createItem(data, 0, '#tomorrow-list');
+      if (!has) {
+        $('#tomorrow-list ons-list-header').show();
+        has = true;
+      }
+      return RunningMan.services.schedule.createTimeItem(data, 0, '#tomorrow-list');
     });
   },
 
   'todayPage.show': function init() {
+    var hasNext = false;
+    var hasToday = false;
+    $('#next-list ons-list-item').remove();
+    $('#todayPage ons-list-header:last').hide();
     RunningMan.stores.queryNextTask(function create(data) {
+      if (!hasNext) {
+        $('#todayPage ons-list-header:last').show();
+        hasNext = true;
+      }
       return RunningMan.services.schedule.createItem(data, 0, '#next-list');
     });
 
+    $('#today-list ons-list-item').remove();
+    $('#todayPage ons-list-header:first').hide();
     RunningMan.stores.queryDayTask(0, function create(data) {
-      return RunningMan.services.schedule.createItem(data, 0, '#today-list');
+      if (!hasToday) {
+        $('#todayPage ons-list-header:first').show();
+        hasToday = true;
+      }
+      return RunningMan.services.schedule.createTimeItem(data, 0, '#today-list');
     });
   },
 
   'expirePage.show': function init() {
     var noData = true;
     var parent = '#expire-list';
-    $('#expire-list').remove('.list-item');
+    $(parent + ' ons-list-item').remove();
     RunningMan.stores.queryExpire(function create(data) {
       if (noData) {
-        document.querySelector(parent).firstChild.innerHTML = '已经延误';
+        $(parent + ' ons-list-header').html('已经延误：');
         noData = false;
       }
       return RunningMan.services.schedule.createItem(data, 0, parent);

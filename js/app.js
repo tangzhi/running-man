@@ -8,8 +8,6 @@ document.addEventListener('init', function init(event) {
   // Each page calls its own initialization controller.
   if (RunningMan.controllers.hasOwnProperty(page.id)) {
     RunningMan.controllers[page.id](page);
-  } else if (RunningMan.controllers.hasOwnProperty(page.id + '.show')) {
-    RunningMan.controllers[page.id + '.show'](page);
   }
 });
 
