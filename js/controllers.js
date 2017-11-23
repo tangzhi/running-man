@@ -22,7 +22,6 @@ RunningMan.controllers = {
     });
 
     $('ons-toolbar ons-toolbar-button ons-icon').on('click', function cl() {
-      // console.log($('#inbox-list ons-list-item div.right ons-icon'));
       //
     });
 
