@@ -23,8 +23,7 @@ RunningMan.controllers = {
     RunningMan.stores.queryInbox(RunningMan.services.inbox.create);
 
     $('#addItem').on('click', function click() {
-      RunningMan.stores.newTask(page.querySelector('#stuff').value,
-        RunningMan.services.inbox.create);
+      RunningMan.stores.newTask(page.querySelector('#stuff').value, RunningMan.services.inbox.create);
       console.log($('#stuff'));
       $('#stuff').val('');
     });
@@ -35,6 +34,19 @@ RunningMan.controllers = {
 
     $('#inbox-list').on('click', 'ons-list-item div.right ons-icon', function cl(event) {
       RunningMan.services.inbox.remove(event);
+    });
+  },
+
+  scheduleContainerPage: function init() {
+    RunningMan.stores.queryCount(function showCount(count) {
+      console.log(count);
+      $('#expiretab div.tabbar__badge.notification').html(count[0] ? count[0] : '');
+      $('#todaytab div.tabbar__badge.notification').html((count[1] + count[2]) ? (count[1] + count[2]) : '');
+      $('#tomorrowtab div.tabbar__badge.notification').html(count[3] ? count[3] : '');
+      $('#tomorrow2tab div.tabbar__badge.notification').html(count[4] ? count[4] : '');
+      $('#tomorrow3tab div.tabbar__badge.notification').html(count[5] ? count[5] : '');
+      console.log((count[6] + count[7]));
+      $('#futuretab div.tabbar__badge.notification').html((count[6] + count[7]) ? (count[6] + count[7]) : '');
     });
   },
 

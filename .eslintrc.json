@@ -9,6 +9,7 @@
     "no-console": 0
   },
   "globals": {
-    "RunningMan": true
+    "RunningMan": true,
+    "async": true
   }
 }

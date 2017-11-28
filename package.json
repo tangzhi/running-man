@@ -9,6 +9,7 @@
   "author": "tangz97@gmail.com",
   "license": "MIT",
   "dependencies": {
+    "async": "^2.6.0",
     "jquery": "^3.2.1",
     "onsenui": "^2.5.3"
   }
