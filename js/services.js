@@ -5,7 +5,7 @@ RunningMan.services = {
       template.innerHTML =
       '<ons-list-item tappable>' +
         '<label class="left">' +
-          '<ons-checkbox></ons-checkbox>' +
+          '<ons-checkbox class="task_state"></ons-checkbox>' +
         '</label>' +
         '<div class="center" onclick="navi.pushPage(\'templates/detail.html\',' +
         ' {data: {source: -1, taskId: ' + data._id + '}})">' +
@@ -26,8 +26,9 @@ RunningMan.services = {
     remove: function remove(event) {
       $(event.target).parents('ons-list-item').each(function removeItem() {
         RunningMan.stores.removeTask(this.primaryKey);
-        this.primaryKey = null;
-        this.remove();
+        // this.primaryKey = null;
+        // this.remove();
+        $(this).fadeOut(800);
       });
     },
 
@@ -35,7 +36,7 @@ RunningMan.services = {
       document.querySelectorAll('#inbox-list ons-list-item').forEach(function fun(item) {
         item.primaryKey = null;
         item.remove();
-      })
+      });
     }
   },
 
@@ -45,7 +46,7 @@ RunningMan.services = {
       template.innerHTML =
       '<ons-list-item tappable>' +
         '<label class="left">' +
-          '<ons-checkbox></ons-checkbox>' +
+          '<ons-checkbox class="task_state"></ons-checkbox>' +
         '</label>' +
         '<div class="center" onclick="navi.pushPage(\'templates/detail.html\',' +
         ' {data: {source: ' + source + ', taskId: ' + data._id + '}})">' +

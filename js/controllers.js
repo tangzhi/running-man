@@ -6,6 +6,14 @@ RunningMan.controllers = {
     //   navi.leavePage = event.leavePage;
     //   navi.enterPage = event.enterPage;
     // });
+
+    // 任务完成
+    $('body').on('change', 'ons-checkbox.task_state input[type="checkbox"]', function change(event) {
+      console.log(this.checked);
+      if (this.checked) {
+        RunningMan.services.inbox.remove(event);
+      }
+    });
   },
 
   menuPage: function initMenuPage() {
@@ -51,6 +59,32 @@ RunningMan.controllers = {
         hasFuture = true;
       }
       return RunningMan.services.schedule.createItem(data, 0, '#future-list');
+    });
+  },
+
+  'tomorrow3Page.show': function init() {
+    var has = false;
+    $('#tomorrow3-list ons-list-item').remove();
+    $('#tomorrow3-list ons-list-header').hide();
+    RunningMan.stores.queryDayTask(3, function create(data) {
+      if (!has) {
+        $('#tomorrow3-list ons-list-header').show();
+        has = true;
+      }
+      return RunningMan.services.schedule.createTimeItem(data, 0, '#tomorrow3-list');
+    });
+  },
+
+  'tomorrow2Page.show': function init() {
+    var has = false;
+    $('#tomorrow2-list ons-list-item').remove();
+    $('#tomorrow2-list ons-list-header').hide();
+    RunningMan.stores.queryDayTask(2, function create(data) {
+      if (!has) {
+        $('#tomorrow2-list ons-list-header').show();
+        has = true;
+      }
+      return RunningMan.services.schedule.createTimeItem(data, 0, '#tomorrow2-list');
     });
   },
 
@@ -144,7 +178,7 @@ RunningMan.controllers = {
 
     console.log('source:' + source);
     switch (source) {
-      case -1:  // 来自收件箱
+      case -1: // 来自收件箱
         back = '收集箱';
         title = '待整理项';
         break;
@@ -182,7 +216,7 @@ RunningMan.controllers = {
     $('#detailPageDone').on('click', function ok() {
       var id = theTask._id;
       var datetime;
-      theTask.state = $('input[type="checkbox"]').is(':checked') ? 1 : 0;
+      theTask.state = $('#detailPageDone input[type="checkbox"]').is(':checked') ? 1 : 0;
       theTask.title = $('#detail_title').val();
       theTask.detail = $('#desc').val() || '';
       theTask.mode = $('input[name="mode"]:checked').val() ?

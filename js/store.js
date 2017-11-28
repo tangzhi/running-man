@@ -164,7 +164,7 @@ RunningMan.stores = {
     var today = new Date();
     var theDay = today.setDate(today.getDate() + 3) && today;
     var request = index.openCursor(IDBKeyRange.lowerBound(
-        [RunningMan.utils.dateFormat(theDay, 'yyyy-MM-dd'), 0]));
+        [RunningMan.utils.dateFormat(theDay, 'yyyy-MM-dd'), 0], true));
     var that = this;
     request.onsuccess = function success() {
       var cursor = request.result;
