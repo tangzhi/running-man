@@ -142,8 +142,8 @@ RunningMan.stores = {
     var tx = this.db.transaction('tasks');
     var store = tx.objectStore('tasks');
     var index = store.index('by_end_date');
-    var request = index.openCursor(IDBKeyRange.upperBound([
-      RunningMan.utils.dateFormat(new Date(), 'yyyy-MM-dd'), 0], true));
+    var request = index.openCursor(IDBKeyRange.bound(['1900-01-01', 0], [
+      RunningMan.utils.dateFormat(new Date(), 'yyyy-MM-dd'), 0], true, true));
     var that = this;
     request.onsuccess = function success() {
       var cursor = request.result;
@@ -187,8 +187,8 @@ RunningMan.stores = {
     // queryExpire count
     async.parallel([
       function queryExpireCount(callback) {
-        var request = bydate.count(IDBKeyRange.upperBound([
-          RunningMan.utils.dateFormat(today, 'yyyy-MM-dd'), 0], true));
+        var request = bydate.count(IDBKeyRange.bound(['1900-01-01', 0], [
+          RunningMan.utils.dateFormat(today, 'yyyy-MM-dd'), 0], true, true));
         request.onsuccess = function success() {
           callback(null, request.result);
         };
