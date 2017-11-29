@@ -14,7 +14,7 @@ RunningMan.services = {
             ('<span class="list-item__subtitle" style="text-align: right;font-size: 12px;">截止于' +
             data.end_date + '</span>') : '') +
         '</div>' +
-        '<div class="right" style="display: none">' +
+        '<div class="right">' +
           '<ons-icon size="30px" style="color: grey; padding-left: 4px" ' +
           'icon="ion-ios-trash-outline, material:md-delete"></ons-icon>' +
         '</div>' +

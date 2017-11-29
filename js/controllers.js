@@ -1,13 +1,22 @@
 RunningMan.controllers = {
+  menuPage: function initMenuPage() {
+  },
+
   homePage: function init() {
-    RunningMan.stores.openDatabase();
+    RunningMan.stores.openDatabase(function initFirstPage() {
+      RunningMan.stores.querySysParam('firstPage', function cb(o) {
+        if (o.value && o.value !== 'home.html') {
+          navi.pushPage('templates/' + o.value);
+        }
+      });
+    });
     // navi.on('postpush', function pp(event) {
     //
     //   navi.leavePage = event.leavePage;
     //   navi.enterPage = event.enterPage;
     // });
 
-    // 任务完成
+    // 点击任务状态复选框，任务完成
     $('body').on('change', 'ons-checkbox.task_state input[type="checkbox"]', function change(event) {
       console.log(this.checked);
       if (this.checked) {
@@ -16,12 +25,13 @@ RunningMan.controllers = {
     });
   },
 
-  menuPage: function initMenuPage() {
+  'homePage.show': function show() {
+    if (RunningMan.stores.db) {
+      RunningMan.stores.setSysParam('firstPage', 'home.html');
+    }
   },
 
   inboxPage: function init(page) {
-    RunningMan.stores.queryInbox(RunningMan.services.inbox.create);
-
     $('#addItem').on('click', function click() {
       RunningMan.stores.newTask(page.querySelector('#stuff').value, RunningMan.services.inbox.create);
       console.log($('#stuff'));
@@ -37,10 +47,20 @@ RunningMan.controllers = {
     });
   },
 
+  'inboxPage.show': function show() {
+    RunningMan.stores.setSysParam('firstPage', 'inbox.html');
+    $('#inbox-list ons-list-item').remove();
+    RunningMan.stores.queryInbox(RunningMan.services.inbox.create);
+  },
+
   // data.category
   // data.parent_id
   itemsPage: function init() {
 
+  },
+
+  'scheduleContainerPage.show': function show() {
+    RunningMan.stores.setSysParam('firstPage', 'schedule.html');
   },
 
   scheduleContainerPage: function init() {
@@ -265,7 +285,6 @@ RunningMan.controllers = {
 
     });
 
-    // 设置 时间
 
     // 选择 处理方式
     $('input[name="mode"]').on('click', function change() {
@@ -280,6 +299,15 @@ RunningMan.controllers = {
       }
     });
 
+    // 删除任务
+    $('#detail_del').on('click', function rm() {
+      if (theTask._id) {
+        RunningMan.stores.removeTask(theTask._id);
+      }
+      navi.popPage();
+    });
+
+    // 保存任务
     $('#detailPageDone').on('click', function ok() {
       var id = theTask._id;
       var datetime;

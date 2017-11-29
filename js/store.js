@@ -17,7 +17,9 @@ RunningMan.stores = {
   newTask: function simple(title, cb) {
     var tx = this.db.transaction('tasks', 'readwrite');
     var store = tx.objectStore('tasks');
-    var def = { mode: -1, project: -1, context: -1, state: 0};
+    var def = {
+      mode: -1, project: -1, context: -1, state: 0
+    };
     var request;
     if (typeof title === 'object') {
       this.extend(def, title);
@@ -269,12 +271,27 @@ RunningMan.stores = {
     };
   },
 
+  setSysParam: function set(code, value) {
+    var tx = this.db.transaction('sysparam', 'readwrite');
+    var store = tx.objectStore('sysparam');
+    store.put({ code: code, value: value });
+  },
+
+  // 查询首页
+  querySysParam: function query(code, cb) {
+    var tx = this.db.transaction('sysparam');
+    var store = tx.objectStore('sysparam');
+    store.get(code).onsuccess = function finded(e) {
+      cb(e.target.result);
+    };
+  },
+
   queryItems: function query(category, parentId, cb) {
     var tx = this.db.transaction('items');
     var store = tx.objectStore('items');
   },
 
-  openDatabase: function openDB() {
+  openDatabase: function openDB(cb) {
     var request = indexedDB.open('running-man');
     var that = this;
     request.onupgradeneeded = function fun(event) {
@@ -309,11 +326,15 @@ RunningMan.stores = {
         ['@家', '@办公室', '@路上', '@电话', '@电脑'].forEach(function add(item) {
           store.put(item);
         });
+
+        store = that.db.createObjectStore('sysparam', { keyPath: 'code' });
+        store.put({ code: 'firstPage', value: 'home.html' });
       }
     };
 
     request.onsuccess = function success() {
       that.db = request.result;
+      if (cb) cb();
       console.log('openDatabase db open.');
     };
     console.log('openDatabase ...');
