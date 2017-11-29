@@ -5,13 +5,13 @@
       <div class="center">日程表</div>
       <div class="right">
         <ons-toolbar-button>
-          <ons-icon icon="ion-ios-plus-empty, material:md-plus"></ons-icon>
+          <ons-icon icon="ion-ios-plus-empty, material:md-plus" class="addTask" source="0"></ons-icon>
         </ons-toolbar-button>
       </div>
     </ons-toolbar>
   </ons-toolbar>
 
-  <ons-tabbar position="auto" animation="slide">
+  <ons-tabbar position="auto" animation="slide" id="scheduletabs">
     <ons-tab id="expiretab" page="templates/schedule-expire.html" badge="5" label="过去">
     </ons-tab>
     <ons-tab id="todaytab" page="templates/schedule-today.html" badge="3" label="今天" active>

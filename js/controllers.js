@@ -23,9 +23,18 @@ RunningMan.controllers = {
         RunningMan.services.inbox.remove(event);
       }
     });
+
+    $(document).on('click', 'ons-toolbar-button ons-icon.addTask', function click(event) {
+      navi.pushPage('templates/detail.html', {
+        data: {
+          source: parseInt($(event.target).attr('source'), 10)
+        }
+      });
+    });
   },
 
   'homePage.show': function show() {
+    $('ons-toolbar div.center').html('逐日');
     if (RunningMan.stores.db) {
       RunningMan.stores.setSysParam('firstPage', 'home.html');
     }
@@ -48,6 +57,8 @@ RunningMan.controllers = {
   },
 
   'inboxPage.show': function show() {
+    $('ons-toolbar span.back-button__label').html('首页');
+    $('ons-toolbar div.center').html('收集箱');
     RunningMan.stores.setSysParam('firstPage', 'inbox.html');
     $('#inbox-list ons-list-item').remove();
     RunningMan.stores.queryInbox(RunningMan.services.inbox.create);
@@ -60,6 +71,8 @@ RunningMan.controllers = {
   },
 
   'scheduleContainerPage.show': function show() {
+    $('ons-toolbar span.back-button__label').html('首页');
+    $('ons-toolbar div.center').html('日程表');
     RunningMan.stores.setSysParam('firstPage', 'schedule.html');
   },
 
@@ -241,7 +254,7 @@ RunningMan.controllers = {
     var theTask = {}; // 当前任务
     var showTaskDetail;
     // 设置标题
-    var source = page.data.source ? page.data.source : -1;
+    var source = page.data.source;
     var back;
     var title;
     // 属性页与详细页 切换事件
@@ -263,6 +276,7 @@ RunningMan.controllers = {
     selectAttrPage('segment-a');
     selectAttrPage('segment-b');
 
+    console.log(page.data);
     console.log('source:' + source);
     switch (source) {
       case -1: // 来自收件箱
@@ -344,8 +358,25 @@ RunningMan.controllers = {
     // 显示明细
     showTaskDetail = function show(task) {
       theTask = task;
-      $('#detail_title').val(theTask.title);
+      $('#detail_title').val(theTask.title || 'new task');
       $('#desc').val(theTask.detail || '');
+      if (!theTask._id && page.data.source === 0) {
+        var theDay = new Date();
+        theTask.mode = 1;
+        switch (document.getElementById('scheduletabs').getActiveTabIndex()) {
+          case 0:
+            theTask.mode = 4;
+            break;
+          case 5:
+            theTask.mode = 3;
+            break;
+          default:
+            var theDay = new Date();
+            theDay.setDate(theDay.getDate() + document.getElementById('scheduletabs').getActiveTabIndex() - 1);
+            theTask.end_date = RunningMan.utils.dateFormat(theDay, 'yyyy-MM-dd');
+            theTask.end_time = RunningMan.utils.dateFormat(theDay, 'hh:mm');
+        }
+      }
       $('input[name="mode"][value="' + theTask.mode + '"]').prop('checked', true);
       if (theTask.mode === 1) {
         $('#time_title').html(theTask.end_date + ' ' + theTask.end_time);
@@ -359,6 +390,8 @@ RunningMan.controllers = {
     // 如果有 任务_id, 则显示任务信息
     if (page.data.taskId) {
       RunningMan.stores.queryTask(page.data.taskId, showTaskDetail);
+    } else {
+      showTaskDetail({});
     }
   }
 };
