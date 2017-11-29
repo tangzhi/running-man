@@ -17,7 +17,7 @@ RunningMan.stores = {
   newTask: function simple(title, cb) {
     var tx = this.db.transaction('tasks', 'readwrite');
     var store = tx.objectStore('tasks');
-    var def = { mode: -1, project: -1, context: -1, state: 0 };
+    var def = { mode: -1, project: -1, context: -1, state: 0};
     var request;
     if (typeof title === 'object') {
       this.extend(def, title);
@@ -269,6 +269,11 @@ RunningMan.stores = {
     };
   },
 
+  queryItems: function query(category, parentId, cb) {
+    var tx = this.db.transaction('items');
+    var store = tx.objectStore('items');
+  },
+
   openDatabase: function openDB() {
     var request = indexedDB.open('running-man');
     var that = this;
@@ -282,6 +287,16 @@ RunningMan.stores = {
           .forEach(function addIndex(item) {
             store.createIndex('by_' + item, [item, 'state']);
           });
+
+        store = that.db.createObjectStore('items', { autoIncrement: true });
+        // 项目
+        store.put({
+          parent_id: 0, category: 1, name: '项目', has_children: true
+        }, 1);
+        // 场景
+        store.put({
+          parent_id: 0, category: 2, name: '场景', has_children: true
+        }, 2);
 
         store = that.db.createObjectStore('project', { autoIncrement: true });
         store.put('无', -1);

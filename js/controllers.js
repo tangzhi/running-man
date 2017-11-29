@@ -37,6 +37,12 @@ RunningMan.controllers = {
     });
   },
 
+  // data.category
+  // data.parent_id
+  itemsPage: function init() {
+
+  },
+
   scheduleContainerPage: function init() {
     // 计算日期
     switch (new Date().getDay()) {
@@ -195,9 +201,14 @@ RunningMan.controllers = {
   },
 
   timePage: function init(page) {
+    // 设置时间
     if (page.data && page.data.datetime) {
       $('#alerttime').val(page.data.datetime);
     }
+
+    // 默认不重复
+    $('#timePage ons-list-header:last').hide();
+    $('#timePage #next-list').hide();
 
     $('ons-page').on('click', '#timePageDone', function ok() {
       $('#time_title').html($('#alerttime').val().replace('T', ' '));
