@@ -38,6 +38,51 @@ RunningMan.controllers = {
   },
 
   scheduleContainerPage: function init() {
+    // 计算日期
+    switch (new Date().getDay()) {
+      case 0: // 今天是星期日
+        $('#tomorrowtab div.tabbar__label').html('周一');
+        $('#tomorrow2tab div.tabbar__label').html('周二');
+        $('#tomorrow3tab div.tabbar__label').html('周三');
+        break;
+      case 1:
+        $('#tomorrowtab div.tabbar__label').html('周二');
+        $('#tomorrow2tab div.tabbar__label').html('周三');
+        $('#tomorrow3tab div.tabbar__label').html('周四');
+        break;
+      case 2:
+        $('#tomorrowtab div.tabbar__label').html('周三');
+        $('#tomorrow2tab div.tabbar__label').html('周四');
+        $('#tomorrow3tab div.tabbar__label').html('周五');
+        break;
+      case 3:
+        $('#tomorrowtab div.tabbar__label').html('周四');
+        $('#tomorrow2tab div.tabbar__label').html('周五');
+        $('#tomorrow3tab div.tabbar__label').html('周六');
+        break;
+      case 4:
+        $('#tomorrowtab div.tabbar__label').html('周五');
+        $('#tomorrow2tab div.tabbar__label').html('周六');
+        $('#tomorrow3tab div.tabbar__label').html('周日');
+        break;
+      case 5:
+        $('#tomorrowtab div.tabbar__label').html('周六');
+        $('#tomorrow2tab div.tabbar__label').html('周日');
+        $('#tomorrow3tab div.tabbar__label').html('周一');
+        break;
+      case 6:
+        $('#tomorrowtab div.tabbar__label').html('周日');
+        $('#tomorrow2tab div.tabbar__label').html('周一');
+        $('#tomorrow3tab div.tabbar__label').html('周二');
+        break;
+      default:
+        $('#tomorrowtab div.tabbar__label').html('周不');
+        $('#tomorrow2tab div.tabbar__label').html('周可');
+        $('#tomorrow3tab div.tabbar__label').html('周能');
+        break;
+    }
+
+    // 计算数量
     RunningMan.stores.queryCount(function showCount(count) {
       console.log(count);
       $('#expiretab div.tabbar__badge.notification').html(count[0] ? count[0] : '');
@@ -45,7 +90,6 @@ RunningMan.controllers = {
       $('#tomorrowtab div.tabbar__badge.notification').html(count[3] ? count[3] : '');
       $('#tomorrow2tab div.tabbar__badge.notification').html(count[4] ? count[4] : '');
       $('#tomorrow3tab div.tabbar__badge.notification').html(count[5] ? count[5] : '');
-      console.log((count[6] + count[7]));
       $('#futuretab div.tabbar__badge.notification').html((count[6] + count[7]) ? (count[6] + count[7]) : '');
     });
   },
