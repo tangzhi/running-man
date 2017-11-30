@@ -47,6 +47,17 @@ RunningMan.stores = {
     store.delete(id);
   },
 
+  finishTask: function finish(id) {
+    var tx = this.db.transaction('tasks', 'readwrite');
+    var store = tx.objectStore('tasks');
+    store.get(id).onsuccess = function o(e) {
+      var value = e.target.result;
+      value.finish_datetime = RunningMan.utils.dateFormat(new Date(), 'yyyy-MM-dd hh:mm');
+      value.state = 1;
+      store.put(value, id);
+    };
+  },
+
   extend: function fun(obj) {
     var index;
     var source;

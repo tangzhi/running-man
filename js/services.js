@@ -26,8 +26,14 @@ RunningMan.services = {
     remove: function remove(event) {
       $(event.target).parents('ons-list-item').each(function removeItem() {
         RunningMan.stores.removeTask(this.primaryKey);
-        // this.primaryKey = null;
-        // this.remove();
+        this.primaryKey = null;
+        this.remove();
+      });
+    },
+
+    finish: function finish(event) {
+      $(event.target).parents('ons-list-item').each(function removeItem() {
+        RunningMan.stores.finishTask(this.primaryKey);
         $(this).fadeOut(800);
       });
     },
@@ -65,7 +71,7 @@ RunningMan.services = {
       template.innerHTML =
       '<ons-list-item tappable>' +
         '<label class="left">' +
-          '<ons-checkbox></ons-checkbox>' +
+          '<ons-checkbox class="task_state"></ons-checkbox>' +
         '</label>' +
         '<div class="center" onclick="navi.pushPage(\'templates/detail.html\',' +
         ' {data: {source: ' + source + ', taskId: ' + data._id + '}})">' +

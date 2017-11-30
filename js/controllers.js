@@ -10,17 +10,12 @@ RunningMan.controllers = {
         }
       });
     });
-    // navi.on('postpush', function pp(event) {
-    //
-    //   navi.leavePage = event.leavePage;
-    //   navi.enterPage = event.enterPage;
-    // });
 
     // 点击任务状态复选框，任务完成
     $('body').on('change', 'ons-checkbox.task_state input[type="checkbox"]', function change(event) {
       console.log(this.checked);
       if (this.checked) {
-        RunningMan.services.inbox.remove(event);
+        RunningMan.services.inbox.finish(event);
       }
     });
 
