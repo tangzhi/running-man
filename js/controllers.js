@@ -229,6 +229,68 @@ RunningMan.controllers = {
   },
 
   timePage: function init(page) {
+    var repeat = {};
+    // 切换重复类型
+    var changeNextType = function change(type) {
+      $('input[name="' + type + '"]').on('change', function change() {
+        // console.log($('input[type="radio"]:checked').val());
+        switch ($('input[name="' + type + '"]:checked').val()) {
+          case '0': // 天
+            repeat.next_type = 0;
+            break;
+          case '1': // 周
+            repeat.next_type = 1;
+            break;
+          case '2': // 月
+            repeat.next_type = 2;
+            break;
+          default:
+            repeat.next_type = 2;
+        }
+        showNextTime()
+      });
+    };
+    var calculateNextTime = function cal() {
+      var day;
+      if (!$('#alerttime').val() || !repeat.next_step) {
+        return '';
+      }
+      day = new Date($('#alerttime').val());
+      console.log('day:%o,step:%d,type:%s', day, repeat.next_step, repeat.next_type);
+      switch (repeat.next_type) {
+        case 0: // 日
+          day.setDate(day.getDate() + repeat.next_step);
+          break;
+        case 1: // 周
+          day.setDate(day.getDate() + (repeat.next_step * 7));
+          break;
+        case 2: // 月
+          day.setMonth(day.getMonth() + repeat.next_step);
+          break;
+        default:
+      }
+      console.log(day);
+      return RunningMan.utils.dateFormat(day, 'yyyy-MM-dd hh:mm');
+    };
+    var showNextTime = function show() {
+      switch (repeat.next_type) {
+        case 0:
+          $('#timePage #next-list ons-list-item:first div.right label').html('天');
+          break;
+        case 1:
+          $('#timePage #next-list ons-list-item:first div.right label').html('周');
+          break;
+        case 2:
+          $('#timePage #next-list ons-list-item:first div.right label').html('月');
+          break;
+        default:
+      }
+      // 计算时间
+      $('#timePage #next-list ons-list-item:last div.right').html(calculateNextTime());
+    };
+    changeNextType('next-segment-a');
+    changeNextType('next-segment-b');
+
     // 设置时间
     if (page.data && page.data.datetime) {
       $('#alerttime').val(page.data.datetime);
@@ -238,9 +300,48 @@ RunningMan.controllers = {
     $('#timePage ons-list-header:last').hide();
     $('#timePage #next-list').hide();
 
-    $('ons-page').on('click', '#timePageDone', function ok() {
+    // 重复选项
+    $('body').on('change', '#timePage ons-switch', function sw() {
+      console.log(111111111);
+      console.log(this.checked);
+      $('#timePage ons-list-header:last').toggle(this.checked);
+      $('#timePage #next-list').toggle(this.checked);
+      if (this.checked) {
+        repeat.next_step = 1;
+        repeat.next_type = 2; // 月
+      } else {
+        repeat.next_step = 0;
+        repeat.next_type = 0; // 日
+      }
+      $('#timePage #next-list ons-list-item:first div.right span').html(repeat.next_step);
+      $('#timePage #next-list ons-list-item:last div.right').html(calculateNextTime());
+    });
+    // 点击 加减
+    $('body').on('click', '#timePage #next-list ons-list-item:first ons-icon', function fn() {
+      console.log($(this).attr('direction'));
+      switch ($(this).attr('direction')) {
+        case 'remove':
+          if (repeat.next_step > 1) {
+            repeat.next_step -= 1;
+          }
+          break;
+        case 'add':
+          repeat.next_step += 1;
+          break;
+        default:
+      }
+      $('#timePage #next-list ons-list-item:first div.right span').html(repeat.next_step);
+      $('#timePage #next-list ons-list-item:last div.right').html(calculateNextTime());
+    });
+
+    // 提交
+    $('body').on('click', '#timePageDone', function ok() {
+      if (repeat.next_step) {
+        $('#next_step').val(repeat.next_step);
+        $('#next_type').val(repeat.next_type);
+      }
       $('#time_title').html($('#alerttime').val().replace('T', ' '));
-      $('input[name="mode"][value="1"]').prop('checked', true);
+      $('#detailPage input[name="mode"][value="1"]').prop('checked', true);
       navi.popPage();
     });
   },
@@ -268,8 +369,8 @@ RunningMan.controllers = {
         }
       });
     };
-    selectAttrPage('segment-a');
-    selectAttrPage('segment-b');
+    selectAttrPage('attr-segment-a');
+    selectAttrPage('attr-segment-b');
 
     console.log(page.data);
     console.log('source:' + source);
@@ -333,6 +434,10 @@ RunningMan.controllers = {
         datetime = $('#time_title').html();
         theTask.end_date = datetime.split(' ')[0];
         theTask.end_time = datetime.split(' ')[1];
+      }
+      if (!$('#next_step').val()) {
+        theTask.next_step = parseInt($('#next_step').val(), 10);
+        theTask.next_type = parseInt($('#next_type').val(), 10);
       }
       delete theTask._id;
       console.log(theTask);

@@ -39,23 +39,23 @@
         </label>
         <div class="right right-label">
           <span>1</span>&nbsp;<label>月</label>
-          <ons-icon size="30px" style="color: grey; padding-left: 15px" icon="ion-ios-minus-outline, material:ion-android-remove-circle"></ons-icon>
-          <ons-icon size="30px" style="color: grey; padding-left: 15px" icon="ion-ios-plus-outline, material:ion-android-add-circle"></ons-icon>
+          <ons-icon size="30px" style="padding-left: 15px" icon="ion-android-remove" direction="remove"></ons-icon>
+          <ons-icon size="30px" style="padding-left: 15px" icon="ion-android-add" direction="add"></ons-icon>
         </div>
       </ons-list-item>
       <ons-list-item>
         <ons-if platform="ios other" style="width:100%">
           <div class="segment" style="width: 98%; margin: 0 auto;">
             <div class="segment__item">
-              <input type="radio" value="a" class="segment__input" name="segment-a">
+              <input type="radio" value="0" class="segment__input" name="next-segment-a">
               <button class="segment__button">天</button>
             </div>
             <div class="segment__item">
-              <input type="radio" value="d" class="segment__input" name="segment-a">
+              <input type="radio" value="1" class="segment__input" name="next-segment-a">
               <button class="segment__button">周</button>
             </div>
             <div class="segment__item">
-              <input type="radio" value="t" class="segment__input" name="segment-a" checked>
+              <input type="radio" value="2" class="segment__input" name="next-segment-a" checked>
               <button class="segment__button">月</button>
             </div>
           </div>
@@ -63,15 +63,15 @@
         <ons-if platform="android" style="width:100%">
           <div class="segment segment--material" style="width: 98%; margin: 0 auto;">
             <div class="segment__item segment--material__item">
-              <input type="radio" value="a" class="segment__input segment--material__input" name="segment-b">
+              <input type="radio" value="0" class="segment__input segment--material__input" name="next-segment-b">
               <button class="segment__button segment--material__button">天</button>
             </div>
             <div class="segment__item segment--material__item">
-              <input type="radio" value="d" class="segment__input segment--material__input" name="segment-b">
+              <input type="radio" value="1" class="segment__input segment--material__input" name="next-segment-b">
               <button class="segment__button segment--material__button">周</button>
             </div>
             <div class="segment__item segment--material__item">
-              <input type="radio" value="t" class="segment__input segment--material__input" name="segment-b" checked>
+              <input type="radio" value="2" class="segment__input segment--material__input" name="next-segment-b" checked>
               <button class="segment__button segment--material__button">月</button>
             </div>
           </div>

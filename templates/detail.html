@@ -24,15 +24,15 @@
       <ons-if platform="ios other" style="width:100%">
         <div class="segment" style="width: 98%; margin: 0 auto;">
           <div class="segment__item">
-            <input type="radio" value="a" class="segment__input" name="segment-a" checked>
+            <input type="radio" value="a" class="segment__input" name="attr-segment-a" checked>
             <button class="segment__button">属性</button>
           </div>
           <div class="segment__item">
-            <input type="radio" value="d" class="segment__input" name="segment-a">
+            <input type="radio" value="d" class="segment__input" name="attr-segment-a">
             <button class="segment__button">描述</button>
           </div>
           <div class="segment__item" style="display:none">
-            <input type="radio" value="t" class="segment__input" name="segment-a">
+            <input type="radio" value="t" class="segment__input" name="attr-segment-a">
             <button class="segment__button">附件</button>
           </div>
         </div>
@@ -40,15 +40,15 @@
       <ons-if platform="android" style="width:100%">
         <div class="segment segment--material" style="width: 98%; margin: 0 auto;">
           <div class="segment__item segment--material__item">
-            <input type="radio" value="a" class="segment__input segment--material__input" name="segment-b" checked>
+            <input type="radio" value="a" class="segment__input segment--material__input" name="attr-segment-b" checked>
             <button class="segment__button segment--material__button">属性</button>
           </div>
           <div class="segment__item segment--material__item">
-            <input type="radio" value="d" class="segment__input segment--material__input" name="segment-b">
+            <input type="radio" value="d" class="segment__input segment--material__input" name="attr-segment-b">
             <button class="segment__button segment--material__button">描述</button>
           </div>
           <div class="segment__item segment--material__item" style="display:none">
-            <input type="radio" value="t" class="segment__input segment--material__input" name="segment-b">
+            <input type="radio" value="t" class="segment__input segment--material__input" name="attr-segment-b">
             <button class="segment__button segment--material__button">附件</button>
           </div>
         </div>
@@ -58,7 +58,8 @@
   </ons-list>
 
   <ons-list id="attributes">
-
+    <input type="hidden" id="#next_type" value="0"></input>
+    <input type="hidden" id="#next_step" value="0"></input>
     <ons-list-item tappable modifier="nodivider">
       <ons-list style="width: 100%" modifier="inset" id="#dealMode">
         <ons-list-header>处理方式：</ons-list-header>
