@@ -25,5 +25,23 @@ RunningMan.utils = {
       }
     }
     return result;
+  },
+
+  nextTime: function calc(curDateTime, step, type) {
+    var day = new Date(curDateTime);
+    switch (type) {
+      case 0: // 日
+        day.setDate(day.getDate() + step);
+        break;
+      case 1: // 周
+        day.setDate(day.getDate() + (step * 7));
+        break;
+      case 2: // 月
+        day.setMonth(day.getMonth() + step);
+        break;
+      default:
+    }
+    console.log(day);
+    return this.dateFormat(day, 'yyyy-MM-dd hh:mm');
   }
 };

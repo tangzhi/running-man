@@ -48,13 +48,27 @@ RunningMan.stores = {
   },
 
   finishTask: function finish(id) {
-    var tx = this.db.transaction('tasks', 'readwrite');
+    var tx = this.db.transaction(['tasks', 'tasks_his'], 'readwrite');
     var store = tx.objectStore('tasks');
+    var storeHis = tx.objectStore('tasks_his');
+    var that = this;
     store.get(id).onsuccess = function o(e) {
       var value = e.target.result;
+      var nextTime;
+      var newTask = {};
       value.finish_datetime = RunningMan.utils.dateFormat(new Date(), 'yyyy-MM-dd hh:mm');
       value.state = 1;
-      store.put(value, id);
+      value.id = id;
+      storeHis.put(value);
+      store.delete(id);
+      if (value.next_step > 0) {
+        nextTime = RunningMan.utils.nextTime(value.end_date + ' ' + value.end_time, value.next_step, value.next_type);
+        that.extend(newTask, value);
+        newTask.end_date = nextTime.split(' ')[0];
+        newTask.end_time = nextTime.split(' ')[1];
+        newTask.state = 0;
+        store.put(newTask);
+      }
     };
   },
 
@@ -101,7 +115,7 @@ RunningMan.stores = {
     var tx = this.db.transaction('tasks');
     var store = tx.objectStore('tasks');
     var index = store.index('by_mode');
-    var request = index.openCursor(IDBKeyRange.only([3, 0])); // 尽快处理  未完成
+    var request = index.openCursor(IDBKeyRange.only(3)); // 尽快处理  未完成
     var that = this;
     request.onsuccess = function success() {
       var cursor = request.result;
@@ -120,8 +134,7 @@ RunningMan.stores = {
     var index = store.index('by_end_date');
     var today = new Date();
     var theDay = today.setDate(today.getDate() + day) && today;
-    var request = index.openCursor(IDBKeyRange.only([
-      RunningMan.utils.dateFormat(theDay, 'yyyy-MM-dd'), 0]));
+    var request = index.openCursor(IDBKeyRange.only(RunningMan.utils.dateFormat(theDay, 'yyyy-MM-dd')));
     var that = this;
     console.log(RunningMan.utils.dateFormat(theDay, 'yyyy-MM-dd'));
     request.onsuccess = function success() {
@@ -138,7 +151,7 @@ RunningMan.stores = {
     var tx = this.db.transaction('tasks');
     var store = tx.objectStore('tasks');
     var index = store.index('by_mode');
-    var request = index.openCursor(IDBKeyRange.only([0, 0])); // 尽快处理  未完成
+    var request = index.openCursor(IDBKeyRange.only(0)); // 尽快处理  未完成
     var that = this;
     request.onsuccess = function success() {
       var cursor = request.result;
@@ -155,8 +168,7 @@ RunningMan.stores = {
     var tx = this.db.transaction('tasks');
     var store = tx.objectStore('tasks');
     var index = store.index('by_end_date');
-    var request = index.openCursor(IDBKeyRange.bound(['1900-01-01', 0], [
-      RunningMan.utils.dateFormat(new Date(), 'yyyy-MM-dd'), 0], true, true));
+    var request = index.openCursor(IDBKeyRange.bound('1900-01-01', RunningMan.utils.dateFormat(new Date(), 'yyyy-MM-dd'), true, true));
     var that = this;
     request.onsuccess = function success() {
       var cursor = request.result;
@@ -176,8 +188,7 @@ RunningMan.stores = {
     var index = store.index('by_end_date');
     var today = new Date();
     var theDay = today.setDate(today.getDate() + 3) && today;
-    var request = index.openCursor(IDBKeyRange.lowerBound([
-      RunningMan.utils.dateFormat(theDay, 'yyyy-MM-dd'), 0], true));
+    var request = index.openCursor(IDBKeyRange.lowerBound(RunningMan.utils.dateFormat(theDay, 'yyyy-MM-dd'), true));
     var that = this;
     request.onsuccess = function success() {
       var cursor = request.result;
@@ -200,21 +211,19 @@ RunningMan.stores = {
     // queryExpire count
     async.parallel([
       function queryExpireCount(callback) {
-        var request = bydate.count(IDBKeyRange.bound(['1900-01-01', 0], [
-          RunningMan.utils.dateFormat(today, 'yyyy-MM-dd'), 0], true, true));
+        var request = bydate.count(IDBKeyRange.bound('1900-01-01', RunningMan.utils.dateFormat(today, 'yyyy-MM-dd'), true, true));
         request.onsuccess = function success() {
           callback(null, request.result);
         };
       },
       function queryTodayCount(callback) {
-        var request = bydate.count(IDBKeyRange.only([
-          RunningMan.utils.dateFormat(today, 'yyyy-MM-dd'), 0]));
+        var request = bydate.count(IDBKeyRange.only(RunningMan.utils.dateFormat(today, 'yyyy-MM-dd')));
         request.onsuccess = function success() {
           callback(null, request.result);
         };
       },
       function queryNextCount(callback) {
-        var request = bymode.count(IDBKeyRange.only([0, 0]));
+        var request = bymode.count(IDBKeyRange.only(0));
         request.onsuccess = function success() {
           callback(null, request.result);
         };
@@ -222,8 +231,7 @@ RunningMan.stores = {
       function queryTomorrowCount(callback) {
         var theDay = new Date();
         theDay.setDate(theDay.getDate() + 1);
-        bydate.count(IDBKeyRange.only([
-          RunningMan.utils.dateFormat(theDay, 'yyyy-MM-dd'), 0]))
+        bydate.count(IDBKeyRange.only(RunningMan.utils.dateFormat(theDay, 'yyyy-MM-dd')))
           .onsuccess = function success() {
             callback(null, this.result);
           };
@@ -231,8 +239,7 @@ RunningMan.stores = {
       function queryTomorrow2Count(callback) {
         var theDay = new Date();
         theDay.setDate(theDay.getDate() + 2);
-        bydate.count(IDBKeyRange.only([
-          RunningMan.utils.dateFormat(theDay, 'yyyy-MM-dd'), 0]))
+        bydate.count(IDBKeyRange.only(RunningMan.utils.dateFormat(theDay, 'yyyy-MM-dd')))
           .onsuccess = function success() {
             callback(null, this.result);
           };
@@ -240,8 +247,7 @@ RunningMan.stores = {
       function queryTomorrow3Count(callback) {
         var theDay = new Date();
         theDay.setDate(theDay.getDate() + 3);
-        bydate.count(IDBKeyRange.only([
-          RunningMan.utils.dateFormat(theDay, 'yyyy-MM-dd'), 0]))
+        bydate.count(IDBKeyRange.only(RunningMan.utils.dateFormat(theDay, 'yyyy-MM-dd')))
           .onsuccess = function success() {
             callback(null, this.result);
           };
@@ -249,14 +255,13 @@ RunningMan.stores = {
       function queryComingCount(callback) {
         var theDay = new Date();
         theDay.setDate(theDay.getDate() + 3);
-        bydate.count(IDBKeyRange.lowerBound([
-          RunningMan.utils.dateFormat(theDay, 'yyyy-MM-dd'), 0], true))
+        bydate.count(IDBKeyRange.lowerBound(RunningMan.utils.dateFormat(theDay, 'yyyy-MM-dd'), true))
           .onsuccess = function success() {
             callback(null, this.result);
           };
       },
       function queryFutureCount(callback) {
-        var request = bymode.count(IDBKeyRange.only([3, 0]));
+        var request = bymode.count(IDBKeyRange.only(3));
         request.onsuccess = function success() {
           callback(null, request.result);
         };
@@ -271,7 +276,7 @@ RunningMan.stores = {
     var tx = this.db.transaction('tasks');
     var store = tx.objectStore('tasks');
     var index = store.index('by_mode');
-    var request = index.openCursor(IDBKeyRange.only([-1, 0])); // 收件箱  未完成
+    var request = index.openCursor(IDBKeyRange.only(-1)); // 收件箱  未完成
     var that = this;
     request.onsuccess = function success() {
       var cursor = request.result;
@@ -313,8 +318,12 @@ RunningMan.stores = {
         store = that.db.createObjectStore('tasks', { autoIncrement: true });
         ['end_date', 'mode']
           .forEach(function addIndex(item) {
-            store.createIndex('by_' + item, [item, 'state']);
+            store.createIndex('by_' + item, item);
           });
+
+        // 历史表
+        store = that.db.createObjectStore('tasks_his', { keyPath: 'id' });
+        store.createIndex('by_finish_datetime', 'finish_datetime');
 
         store = that.db.createObjectStore('items', { autoIncrement: true });
         // 项目
