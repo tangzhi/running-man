@@ -69,6 +69,17 @@ RunningMan.controllers = {
     $('ons-toolbar span.back-button__label').html('首页');
     $('ons-toolbar div.center').html('日程表');
     RunningMan.stores.setSysParam('firstPage', 'schedule.html');
+
+    // 计算数量
+    RunningMan.stores.queryCount(function showCount(count) {
+      console.log(count);
+      $('#expiretab div.tabbar__badge.notification').html(count[0] ? count[0] : '');
+      $('#todaytab div.tabbar__badge.notification').html((count[1] + count[2]) ? (count[1] + count[2]) : '');
+      $('#tomorrowtab div.tabbar__badge.notification').html(count[3] ? count[3] : '');
+      $('#tomorrow2tab div.tabbar__badge.notification').html(count[4] ? count[4] : '');
+      $('#tomorrow3tab div.tabbar__badge.notification').html(count[5] ? count[5] : '');
+      $('#futuretab div.tabbar__badge.notification').html((count[6] + count[7]) ? (count[6] + count[7]) : '');
+    });
   },
 
   scheduleContainerPage: function init() {
@@ -116,16 +127,6 @@ RunningMan.controllers = {
         break;
     }
 
-    // 计算数量
-    RunningMan.stores.queryCount(function showCount(count) {
-      console.log(count);
-      $('#expiretab div.tabbar__badge.notification').html(count[0] ? count[0] : '');
-      $('#todaytab div.tabbar__badge.notification').html((count[1] + count[2]) ? (count[1] + count[2]) : '');
-      $('#tomorrowtab div.tabbar__badge.notification').html(count[3] ? count[3] : '');
-      $('#tomorrow2tab div.tabbar__badge.notification').html(count[4] ? count[4] : '');
-      $('#tomorrow3tab div.tabbar__badge.notification').html(count[5] ? count[5] : '');
-      $('#futuretab div.tabbar__badge.notification').html((count[6] + count[7]) ? (count[6] + count[7]) : '');
-    });
   },
 
   'futurePage.show': function init() {
