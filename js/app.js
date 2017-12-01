@@ -20,3 +20,13 @@ document.addEventListener('show', function init(event) {
     RunningMan.controllers[page.id + '.show'](page);
   }
 });
+
+document.addEventListener('destroy', function init(event) {
+  var page = event.target;
+  console.log(page.id + '.destroy');
+
+  // Each page calls its own showing controller.
+  if (RunningMan.controllers.hasOwnProperty(page.id + '.destroy')) {
+    RunningMan.controllers[page.id + '.destroy']();
+  }
+});

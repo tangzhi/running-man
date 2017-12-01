@@ -228,6 +228,12 @@ RunningMan.controllers = {
     });
   },
 
+  'timePage.destroy': function destroy() {
+    $('body').off('change', '#timePage ons-switch');
+    $('body').off('click', '#timePageDone');
+    $('body').off('click', '#timePage #next-list ons-list-item:first ons-icon');
+  },
+
   timePage: function init(page) {
     var repeat = {};
     // 切换重复类型
@@ -291,14 +297,27 @@ RunningMan.controllers = {
     changeNextType('next-segment-a');
     changeNextType('next-segment-b');
 
-    // 设置时间
-    if (page.data && page.data.datetime) {
-      $('#alerttime').val(page.data.datetime);
-    }
-
     // 默认不重复
     $('#timePage ons-list-header:last').hide();
     $('#timePage #next-list').hide();
+
+    // 设置时间
+    if (page.data) {
+      console.log(page.data);
+      if (page.data.datetime) {
+        $('#alerttime').val(page.data.datetime);
+      }
+      if (page.data.next_step > 0) {
+        console.log(1111111);
+        $('#timePage ons-switch').prop('checked', true);
+        repeat.next_step = page.data.next_step;
+        repeat.next_type = page.data.next_type;
+        $('#timePage ons-list-header:last').show();
+        $('#timePage #next-list').show();
+        $('#timePage #next-list ons-list-item:first div.right span').html(repeat.next_step);
+        showNextTime();
+      }
+    }
 
     // 重复选项
     $('body').on('change', '#timePage ons-switch', function sw() {
@@ -330,20 +349,32 @@ RunningMan.controllers = {
           break;
         default:
       }
+      console.log(repeat.next_step);
       $('#timePage #next-list ons-list-item:first div.right span').html(repeat.next_step);
       $('#timePage #next-list ons-list-item:last div.right').html(calculateNextTime());
     });
 
     // 提交
     $('body').on('click', '#timePageDone', function ok() {
-      if (repeat.next_step) {
+      console.log(repeat.next_step + ' ' + Math.random());
+      if (repeat.next_step !== undefined) {
         $('#next_step').val(repeat.next_step);
         $('#next_type').val(repeat.next_type);
+        console.log($('#next_step').val());
       }
-      $('#time_title').html($('#alerttime').val().replace('T', ' '));
+      if (repeat.next_step > 0) {
+        $('#time_title').html($('#alerttime').val().replace('T', ' ') + ' 重复');
+      } else {
+        $('#time_title').html($('#alerttime').val().replace('T', ' '));
+      }
       $('#detailPage input[name="mode"][value="1"]').prop('checked', true);
       navi.popPage();
     });
+  },
+
+  'detailPage.destroy': function destroy() {
+    $('#detail_del').off('click');
+    $('#detailPageDone').off('click');
   },
 
   detailPage: function init(page) {
@@ -391,22 +422,27 @@ RunningMan.controllers = {
     $('#detail').css('display', 'none');
 
     // 选择 项目
-    $('#choose-project').on('change', function change() {
-
-    });
-
+    // $('#choose-project').on('change', function change() {
+    //
+    // });
 
     // 选择 处理方式
     $('input[name="mode"]').on('click', function change() {
       console.log($('input[name="mode"]:checked').val());
       if (parseInt($('input[name="mode"]:checked').val(), 10) === 1) {
         console.log($('#time_title').html().replace(' ', 'T'));
-        navi.pushPage('templates/time.html',
-          { data: { datetime: $('#time_title').html().replace(' ', 'T') } });
+        navi.pushPage('templates/time.html', {
+          data: {
+            datetime: $('#time_title').html().replace(' ', 'T').split(' ')[0],
+            next_step: parseInt($('#next_step').val(), 10),
+            next_type: parseInt($('#next_type').val(), 10)
+          }
+        });
         return false;
       } else if (parseInt($('input[name="mode"]:checked').val(), 10) === 2) {
         return false;
       }
+      return true;
     });
 
     // 删除任务
@@ -435,7 +471,7 @@ RunningMan.controllers = {
         theTask.end_date = datetime.split(' ')[0];
         theTask.end_time = datetime.split(' ')[1];
       }
-      if (!$('#next_step').val()) {
+      if ($('#next_step').val()) {
         theTask.next_step = parseInt($('#next_step').val(), 10);
         theTask.next_type = parseInt($('#next_type').val(), 10);
       }
@@ -458,6 +494,7 @@ RunningMan.controllers = {
     // 显示明细
     showTaskDetail = function show(task) {
       theTask = task;
+      console.log(theTask);
       $('#detail_title').val(theTask.title || 'new task');
       $('#desc').val(theTask.detail || '');
       if (!theTask._id && page.data.source === 0) {
@@ -479,7 +516,13 @@ RunningMan.controllers = {
       }
       $('input[name="mode"][value="' + theTask.mode + '"]').prop('checked', true);
       if (theTask.mode === 1) {
-        $('#time_title').html(theTask.end_date + ' ' + theTask.end_time);
+        if (theTask.next_step > 0) {
+          $('#next_step').val(theTask.next_step);
+          $('#next_type').val(theTask.next_type);
+          $('#time_title').html(theTask.end_date + ' ' + theTask.end_time + ' 重复');
+        } else {
+          $('#time_title').html(theTask.end_date + ' ' + theTask.end_time);
+        }
       } else {
         $('#time_title').html('');
       }
