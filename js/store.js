@@ -56,7 +56,7 @@ RunningMan.stores = {
       var value = e.target.result;
       var nextTime;
       var newTask = {};
-      value.finish_datetime = RunningMan.utils.dateFormat(new Date(), 'yyyy-MM-dd hh:mm');
+      value.finish_datetime = RunningMan.utils.dateFormat(new Date(), 'yyyy-MM-dd hh:mm:ss');
       value.state = 1;
       value.id = id;
       storeHis.put(value);
@@ -96,16 +96,40 @@ RunningMan.stores = {
     return obj;
   },
 
+  queryHisTask: function query(id, cb) {
+    var tx = this.db.transaction('tasks_his');
+    var store = tx.objectStore('tasks_his');
+    var that = this;
+    store.get(id).onsuccess = function finded(e) {
+      var value = e.target.result;
+      console.log(e.target);
+      cb(that.extend({ _id: id }, value));
+    };
+  },
+
   queryTask: function query(id, cb) {
     var tx = this.db.transaction('tasks');
     var store = tx.objectStore('tasks');
-    var request = store.openCursor(id);
     var that = this;
-    request.onsuccess = function finded() {
+    store.get(id).onsuccess = function finded(e) {
+      var value = e.target.result;
+      console.log(e.target);
+      cb(that.extend({ _id: id }, value));
+    };
+  },
+
+  queryStar: function query(cb) {
+    var tx = this.db.transaction('tasks');
+    var store = tx.objectStore('tasks');
+    var index = store.index('by_star');
+    var request = index.openCursor(IDBKeyRange.only(1));
+    var that = this;
+    request.onsuccess = function success() {
       var cursor = request.result;
       if (cursor) {
         console.log(cursor.value);
         cb(that.extend({ _id: cursor.primaryKey }, cursor.value));
+        cursor.continue();
       }
     };
   },
@@ -307,6 +331,21 @@ RunningMan.stores = {
     var store = tx.objectStore('items');
   },
 
+  queryHis: function query(begin, end, cb) {
+    var tx = this.db.transaction('tasks_his');
+    var store = tx.objectStore('tasks_his');
+    var index = store.index('by_finish_datetime');
+    var request = index.openCursor(IDBKeyRange.bound(begin, end), "prev");
+    var that = this;
+    request.onsuccess = function success() {
+      var cursor = request.result;
+      if (cursor) {
+        cb(that.extend({ _id: cursor.primaryKey }, cursor.value));
+        cursor.continue();
+      }
+    };
+  },
+
   openDatabase: function openDB(cb) {
     var request = indexedDB.open('running-man');
     var that = this;
@@ -316,7 +355,7 @@ RunningMan.stores = {
       if (event.oldVersion < 1) {
         // Version 1 is the first version of the database.
         store = that.db.createObjectStore('tasks', { autoIncrement: true });
-        ['end_date', 'mode']
+        ['end_date', 'mode', 'star', 'context', 'project']
           .forEach(function addIndex(item) {
             store.createIndex('by_' + item, item);
           });

@@ -65,24 +65,78 @@ RunningMan.controllers = {
 
   },
 
+  'starPage.show': function show() {
+    var has = false;
+    $('#star-list ons-list-item').remove();
+    $('#star-list ons-list-header').hide();
+    RunningMan.stores.queryStar(function create(data) {
+      if (!has) {
+        $('#star-list ons-list-header').show();
+        has = true;
+      }
+      console.log(data);
+      return RunningMan.services.schedule.createItem(data, 0, '#star-list');
+    });
+
+    RunningMan.stores.setSysParam('firstPage', 'star.html');
+  },
+
+  'historyPage.show': function show() {
+    var day = new Date();
+    var begin;
+    var end;
+    var hasList = false;
+
+    // 今天
+    $('#today-his-list').hide();
+    $('#today-his-list ons-list-item').remove();
+    begin = RunningMan.utils.dateFormat(day, 'yyyy-MM-dd 00:00:00');
+    end = RunningMan.utils.dateFormat(day, 'yyyy-MM-dd 23:59:59');
+    RunningMan.stores.queryHis(begin, end, function cb(data) {
+      if (!hasList) {
+        $('#today-his-list').show();
+        hasList = true;
+      }
+      RunningMan.services.history.createTimeItem(data, '#today-his-list');
+    });
+
+    // 本周 （周一 至 周日）
+    $('#week-his-list').hide();
+    $('#week-his-list ons-list-item').remove();
+    day.setDate(day.getDate() - ((day.getDay() === 0) ? 7 : day.getDay()) + 1);
+    begin = RunningMan.utils.dateFormat(day, 'yyyy-MM-dd 00:00:00');
+    day = new Date();
+    day.setDate(day.getDate() - 1);
+    end = RunningMan.utils.dateFormat(day, 'yyyy-MM-dd 23:59:59');
+    hasList = false;
+    RunningMan.stores.queryHis(begin, end, function cb(data) {
+      if (!hasList) {
+        $('#week-his-list').show();
+        hasList = true;
+      }
+      RunningMan.services.history.createItem(data, '#week-his-list');
+    });
+
+    // 更早
+    $('#early-his-list').hide();
+    $('#early-his-list ons-list-item').remove();
+    end = begin;
+    hasList = false;
+    RunningMan.stores.queryHis('1900-01-01 00:00:00', end, function cb(data) {
+      if (!hasList) {
+        $('#early-his-list').show();
+        hasList = true;
+      }
+      RunningMan.services.history.createItem(data, '#early-his-list');
+    });
+  },
+
   'scheduleContainerPage.show': function show() {
+    var day = new Date();
     $('ons-toolbar span.back-button__label').html('首页');
     $('ons-toolbar div.center').html('日程表');
     RunningMan.stores.setSysParam('firstPage', 'schedule.html');
 
-    // 计算数量
-    RunningMan.stores.queryCount(function showCount(count) {
-      console.log(count);
-      $('#expiretab div.tabbar__badge.notification').html(count[0] ? count[0] : '');
-      $('#todaytab div.tabbar__badge.notification').html((count[1] + count[2]) ? (count[1] + count[2]) : '');
-      $('#tomorrowtab div.tabbar__badge.notification').html(count[3] ? count[3] : '');
-      $('#tomorrow2tab div.tabbar__badge.notification').html(count[4] ? count[4] : '');
-      $('#tomorrow3tab div.tabbar__badge.notification').html(count[5] ? count[5] : '');
-      $('#futuretab div.tabbar__badge.notification').html((count[6] + count[7]) ? (count[6] + count[7]) : '');
-    });
-  },
-
-  scheduleContainerPage: function init() {
     // 计算日期
     switch (new Date().getDay()) {
       case 0: // 今天是星期日
@@ -127,6 +181,24 @@ RunningMan.controllers = {
         break;
     }
 
+    // 显示标题提示
+    day.setDate(day.getDate() + 1);
+    $('#tomorrowPage ons-list-header:first').html(RunningMan.utils.dateFormat(day, '到期于 yyyy-MM-dd'));
+    day.setDate(day.getDate() + 1);
+    $('#tomorrow2Page ons-list-header:first').html(RunningMan.utils.dateFormat(day, '到期于 yyyy-MM-dd'));
+    day.setDate(day.getDate() + 1);
+    $('#tomorrow3Page ons-list-header:first').html(RunningMan.utils.dateFormat(day, '到期于 yyyy-MM-dd'));
+
+    // 计算数量
+    RunningMan.stores.queryCount(function showCount(count) {
+      console.log(count);
+      $('#expiretab div.tabbar__badge.notification').html(count[0] ? count[0] : '');
+      $('#todaytab div.tabbar__badge.notification').html((count[1] + count[2]) ? (count[1] + count[2]) : '');
+      $('#tomorrowtab div.tabbar__badge.notification').html(count[3] ? count[3] : '');
+      $('#tomorrow2tab div.tabbar__badge.notification').html(count[4] ? count[4] : '');
+      $('#tomorrow3tab div.tabbar__badge.notification').html(count[5] ? count[5] : '');
+      $('#futuretab div.tabbar__badge.notification').html((count[6] + count[7]) ? (count[6] + count[7]) : '');
+    });
   },
 
   'futurePage.show': function init() {
@@ -262,22 +334,6 @@ RunningMan.controllers = {
         return '';
       }
       return RunningMan.utils.nextTime($('#alerttime').val(), repeat.next_step, repeat.next_type);
-      // day = new Date($('#alerttime').val());
-      // console.log('day:%o,step:%d,type:%s', day, repeat.next_step, repeat.next_type);
-      // switch (repeat.next_type) {
-      //   case 0: // 日
-      //     day.setDate(day.getDate() + repeat.next_step);
-      //     break;
-      //   case 1: // 周
-      //     day.setDate(day.getDate() + (repeat.next_step * 7));
-      //     break;
-      //   case 2: // 月
-      //     day.setMonth(day.getMonth() + repeat.next_step);
-      //     break;
-      //   default:
-      // }
-      // console.log(day);
-      // return RunningMan.utils.dateFormat(day, 'yyyy-MM-dd hh:mm');
     };
     var showNextTime = function show() {
       switch (repeat.next_type) {
@@ -376,6 +432,7 @@ RunningMan.controllers = {
   'detailPage.destroy': function destroy() {
     $('#detail_del').off('click');
     $('#detailPageDone').off('click');
+    $('#detailPage ons-list:first ons-list-item:first label.right ons-icon').off('click');
   },
 
   detailPage: function init(page) {
@@ -407,13 +464,19 @@ RunningMan.controllers = {
     console.log(page.data);
     console.log('source:' + source);
     switch (source) {
+      case 1: // 回顾历史
+        title = '历史动作';
+        back = '返回';
+        break;
       case -1: // 来自收件箱
         back = '收集箱';
         title = '待整理项';
         break;
-      default:
+      case 0:
         back = '返回';
         title = '动作';
+        break;
+      default:
     }
     console.log('back:%s, title:%s', back, title);
     $('ons-toolbar span.back-button__label').html(back);
@@ -446,6 +509,33 @@ RunningMan.controllers = {
       return true;
     });
 
+    isStar = function fn(el) {
+      if ($(el).hasClass('ion-ios-star' || $(el).hasClass('ion-android-star'))) {
+        return true;
+      }
+      return false;
+    };
+
+    star = function fn(el) {
+      $(el).attr('icon', 'ion-ios-star, material:ion-android-star');
+    };
+
+    unStar = function fn(el) {
+      $(el).attr('icon', 'ion-ios-star-outline, material:ion-android-star-outline');
+    }
+
+    starToggle = function fn(el, selected) {
+      if (typeof selected === 'boolean') {
+        selected ? star(el) : unStar(el);
+      } else {
+        isStar(el) ? unStar(el) : star(el);
+      }
+    };
+
+    $('#detailPage ons-list:first ons-list-item:first label.right ons-icon').on('click', function star() {
+      starToggle($('#detailPage ons-list:first ons-list-item:first label.right ons-icon'));
+    });
+
     // 删除任务
     $('#detail_del').on('click', function rm() {
       if (theTask._id) {
@@ -476,6 +566,7 @@ RunningMan.controllers = {
         theTask.next_step = parseInt($('#next_step').val(), 10);
         theTask.next_type = parseInt($('#next_type').val(), 10);
       }
+      theTask.star = isStar($('#detailPage ons-list:first ons-list-item:first label.right ons-icon')) ? 1 : 0;
       delete theTask._id;
       console.log(theTask);
       RunningMan.stores.saveTask(id, theTask);
@@ -496,6 +587,14 @@ RunningMan.controllers = {
     showTaskDetail = function show(task) {
       theTask = task;
       console.log(theTask);
+      if (source === 1) { //浏览历史，隐藏修改提交按钮
+        $('#detail_del').hide();
+        $('#detailPageDone').hide();
+      } else {
+        $('#detail_del').show();
+        $('#detailPageDone').show();
+      }
+      starToggle($('#detailPage ons-list:first ons-list-item:first label.right ons-icon'), !!theTask.star);
       $('#detail_title').val(theTask.title || 'new task');
       $('#desc').val(theTask.detail || '');
       if (!theTask._id && page.data.source === 0) {
@@ -503,7 +602,7 @@ RunningMan.controllers = {
         theTask.mode = 1;
         switch (document.getElementById('scheduletabs').getActiveTabIndex()) {
           case 0:
-            theTask.mode = 4;
+            theTask.mode = 0;
             break;
           case 5:
             theTask.mode = 3;
@@ -533,7 +632,11 @@ RunningMan.controllers = {
 
     // 如果有 任务_id, 则显示任务信息
     if (page.data.taskId) {
-      RunningMan.stores.queryTask(page.data.taskId, showTaskDetail);
+      if (source === 1) { // history
+        RunningMan.stores.queryHisTask(page.data.taskId, showTaskDetail);
+      } else {
+        RunningMan.stores.queryTask(page.data.taskId, showTaskDetail);
+      }
     } else {
       showTaskDetail({});
     }

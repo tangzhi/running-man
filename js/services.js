@@ -55,7 +55,7 @@ RunningMan.services = {
           '<ons-checkbox class="task_state"></ons-checkbox>' +
         '</label>' +
         '<div class="center" onclick="navi.pushPage(\'templates/detail.html\',' +
-        ' {data: {source: ' + source + ', taskId: ' + data._id + '}})">' +
+        ' {data: {source: 0, taskId: ' + data._id + '}})">' +
           '<span class="list-item__title" style="font-size: 16px;">' + data.title + '</span>' +
           (data.end_date ?
             ('<span class="list-item__subtitle" style="text-align: right;font-size: 12px;">到期于' +
@@ -74,7 +74,7 @@ RunningMan.services = {
           '<ons-checkbox class="task_state"></ons-checkbox>' +
         '</label>' +
         '<div class="center" onclick="navi.pushPage(\'templates/detail.html\',' +
-        ' {data: {source: ' + source + ', taskId: ' + data._id + '}})">' +
+        ' {data: {source: 0, taskId: ' + data._id + '}})">' +
           '<span class="list-item__title" style="font-size: 16px;">' + data.title + '</span>' +
           (data.end_date ?
             ('<span class="list-item__subtitle" style="text-align: right;font-size: 12px;">到期于' +
@@ -85,5 +85,37 @@ RunningMan.services = {
       document.querySelector(parent).appendChild(template.firstChild);
     }
 
+  },
+
+  history: {
+    createItem: function item(data, parent) {
+      var template = document.createElement('div');
+      template.innerHTML =
+      '<ons-list-item tappable>' +
+        '<div class="center" onclick="navi.pushPage(\'templates/detail.html\',' +
+        ' {data: {source: 1, taskId: ' + data._id + '}})">' +
+          '<span class="list-item__title" style="font-size: 16px;">' + data.title + '</span>' +
+            ('<span class="list-item__subtitle" style="text-align: right;font-size: 12px;">完成于' +
+            data.finish_datetime + '</span>') +
+        '</div>' +
+      '</ons-list-item>';
+      template.firstChild.primaryKey = data._id;
+      document.querySelector(parent).appendChild(template.firstChild);
+    },
+
+    createTimeItem: function item(data, parent) {
+      var template = document.createElement('div');
+      template.innerHTML =
+      '<ons-list-item tappable>' +
+        '<div class="center" onclick="navi.pushPage(\'templates/detail.html\',' +
+        ' {data: {source: 1, taskId: ' + data._id + '}})">' +
+          '<span class="list-item__title" style="font-size: 16px;">' + data.title + '</span>' +
+            ('<span class="list-item__subtitle" style="text-align: right;font-size: 12px;">完成于' +
+            data.finish_datetime.split(' ')[1] + '</span>') +
+        '</div>' +
+      '</ons-list-item>';
+      template.firstChild.primaryKey = data._id;
+      document.querySelector(parent).appendChild(template.firstChild);
+    }
   }
 };
