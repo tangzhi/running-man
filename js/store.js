@@ -335,6 +335,7 @@ RunningMan.stores = {
     var tx = this.db.transaction('tasks_his');
     var store = tx.objectStore('tasks_his');
     var index = store.index('by_finish_datetime');
+    console.log('begin:%s, end:%s.', begin, end);
     var request = index.openCursor(IDBKeyRange.bound(begin, end), "prev");
     var that = this;
     request.onsuccess = function success() {

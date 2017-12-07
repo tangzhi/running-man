@@ -96,7 +96,7 @@ RunningMan.services = {
         ' {data: {source: 1, taskId: ' + data._id + '}})">' +
           '<span class="list-item__title" style="font-size: 16px;">' + data.title + '</span>' +
             ('<span class="list-item__subtitle" style="text-align: right;font-size: 12px;">完成于' +
-            data.finish_datetime + '</span>') +
+            data.finish_datetime.split(' ')[0] + '</span>') +
         '</div>' +
       '</ons-list-item>';
       template.firstChild.primaryKey = data._id;
@@ -111,7 +111,7 @@ RunningMan.services = {
         ' {data: {source: 1, taskId: ' + data._id + '}})">' +
           '<span class="list-item__title" style="font-size: 16px;">' + data.title + '</span>' +
             ('<span class="list-item__subtitle" style="text-align: right;font-size: 12px;">完成于' +
-            data.finish_datetime.split(' ')[1] + '</span>') +
+            data.finish_datetime.split(' ')[1].substr(0, 5) + '</span>') +
         '</div>' +
       '</ons-list-item>';
       template.firstChild.primaryKey = data._id;

@@ -85,7 +85,9 @@ RunningMan.controllers = {
     var day = new Date();
     var begin;
     var end;
-    var hasList = false;
+    var hasToday = false;
+    var hasWeek = false;
+    var hasEarly = false;
 
     // 今天
     $('#today-his-list').hide();
@@ -93,9 +95,9 @@ RunningMan.controllers = {
     begin = RunningMan.utils.dateFormat(day, 'yyyy-MM-dd 00:00:00');
     end = RunningMan.utils.dateFormat(day, 'yyyy-MM-dd 23:59:59');
     RunningMan.stores.queryHis(begin, end, function cb(data) {
-      if (!hasList) {
+      if (!hasToday) {
         $('#today-his-list').show();
-        hasList = true;
+        hasToday = true;
       }
       RunningMan.services.history.createTimeItem(data, '#today-his-list');
     });
@@ -108,11 +110,10 @@ RunningMan.controllers = {
     day = new Date();
     day.setDate(day.getDate() - 1);
     end = RunningMan.utils.dateFormat(day, 'yyyy-MM-dd 23:59:59');
-    hasList = false;
     RunningMan.stores.queryHis(begin, end, function cb(data) {
-      if (!hasList) {
+      if (!hasWeek) {
         $('#week-his-list').show();
-        hasList = true;
+        hasWeek = true;
       }
       RunningMan.services.history.createItem(data, '#week-his-list');
     });
@@ -121,11 +122,10 @@ RunningMan.controllers = {
     $('#early-his-list').hide();
     $('#early-his-list ons-list-item').remove();
     end = begin;
-    hasList = false;
     RunningMan.stores.queryHis('1900-01-01 00:00:00', end, function cb(data) {
-      if (!hasList) {
+      if (!hasEarly) {
         $('#early-his-list').show();
-        hasList = true;
+        hasEarly = true;
       }
       RunningMan.services.history.createItem(data, '#early-his-list');
     });
