@@ -3,6 +3,7 @@ RunningMan.controllers = {
   },
 
   homePage: function init() {
+    var that = this;
     RunningMan.stores.openDatabase(function initFirstPage() {
       RunningMan.stores.querySysParam('firstPage', function cb(o) {
         if (o.value && o.value !== 'home.html') {
@@ -16,6 +17,8 @@ RunningMan.controllers = {
       console.log(this.checked);
       if (this.checked) {
         RunningMan.services.inbox.finish(event);
+        // 计算数量
+        that.scheduleCountShow();
       }
     });
 
@@ -131,6 +134,19 @@ RunningMan.controllers = {
     });
   },
 
+  scheduleCountShow: function showCnt() {
+    // 计算数量
+    RunningMan.stores.queryCount(function showCount(count) {
+      console.log(count);
+      $('#expiretab div.tabbar__badge.notification').html(count[0] ? count[0] : '');
+      $('#todaytab div.tabbar__badge.notification').html((count[1] + count[2]) ? (count[1] + count[2]) : '');
+      $('#tomorrowtab div.tabbar__badge.notification').html(count[3] ? count[3] : '');
+      $('#tomorrow2tab div.tabbar__badge.notification').html(count[4] ? count[4] : '');
+      $('#tomorrow3tab div.tabbar__badge.notification').html(count[5] ? count[5] : '');
+      $('#futuretab div.tabbar__badge.notification').html((count[6] + count[7]) ? (count[6] + count[7]) : '');
+    });
+  },
+
   'scheduleContainerPage.show': function show() {
     var day = new Date();
     $('ons-toolbar span.back-button__label').html('首页');
@@ -190,15 +206,7 @@ RunningMan.controllers = {
     $('#tomorrow3Page ons-list-header:first').html(RunningMan.utils.dateFormat(day, '到期于 yyyy-MM-dd'));
 
     // 计算数量
-    RunningMan.stores.queryCount(function showCount(count) {
-      console.log(count);
-      $('#expiretab div.tabbar__badge.notification').html(count[0] ? count[0] : '');
-      $('#todaytab div.tabbar__badge.notification').html((count[1] + count[2]) ? (count[1] + count[2]) : '');
-      $('#tomorrowtab div.tabbar__badge.notification').html(count[3] ? count[3] : '');
-      $('#tomorrow2tab div.tabbar__badge.notification').html(count[4] ? count[4] : '');
-      $('#tomorrow3tab div.tabbar__badge.notification').html(count[5] ? count[5] : '');
-      $('#futuretab div.tabbar__badge.notification').html((count[6] + count[7]) ? (count[6] + count[7]) : '');
-    });
+    this.scheduleCountShow();
   },
 
   'futurePage.show': function init() {
