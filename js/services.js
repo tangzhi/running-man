@@ -1,4 +1,27 @@
 RunningMan.services = {
+  common: {
+    notify: function notify() {
+      var msg = [];
+      RunningMan.stores.queryNotification(function it(obj) {
+        msg.push({
+          id: obj.$id,
+          title: obj.title,
+          text: obj.detail,
+          priority: 5,
+          at: new Date(
+            parseInt(obj.end_date.substr(0, 4), 10),
+            parseInt(obj.end_date.substr(5, 2), 10) - 1,
+            parseInt(obj.end_date.substr(8, 2), 10),
+            parseInt(obj.end_time.substr(0, 2), 10),
+            parseInt(obj.end_time.substr(3, 2), 10)
+          )
+        });
+      }, function ok() {
+        cordova.plugins.notification.local.schedule(msg);
+      });
+    }
+  },
+
   inbox: {
     create: function create(data) {
       var template = document.createElement('div');

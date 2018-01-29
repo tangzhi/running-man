@@ -39,12 +39,17 @@ RunningMan.stores = {
     var store = tx.objectStore('tasks');
     var request = store.put(task, id);
     this.onError(tx, request);
+    request.onsuccess = function ok() {
+      RunningMan.services.common.notify();
+    };
   },
 
   removeTask: function rm(id) {
     var tx = this.db.transaction('tasks', 'readwrite');
     var store = tx.objectStore('tasks');
-    store.delete(id);
+    store.delete(id).onsuccess = function ok() {
+      RunningMan.services.common.notify();
+    };
   },
 
   finishTask: function finish(id) {
@@ -60,14 +65,18 @@ RunningMan.stores = {
       value.state = 1;
       value.id = id;
       storeHis.put(value);
-      store.delete(id);
+      store.delete(id).onsuccess = function ok() {
+        RunningMan.services.common.notify();
+      };
       if (value.next_step > 0) {
         nextTime = RunningMan.utils.nextTime(value.end_date + ' ' + value.end_time, value.next_step, value.next_type);
         that.extend(newTask, value);
         newTask.end_date = nextTime.split(' ')[0];
         newTask.end_time = nextTime.split(' ')[1];
         newTask.state = 0;
-        store.put(newTask);
+        store.put(newTask).onsuccess = function ok() {
+          RunningMan.services.common.notify();
+        };
       }
     };
   },
@@ -115,6 +124,28 @@ RunningMan.stores = {
       var value = e.target.result;
       console.log(e.target);
       cb(that.extend({ _id: id }, value));
+    };
+  },
+
+  queryNotification: function query(cb, ok) {
+    var tx = this.db.transaction('tasks');
+    var store = tx.objectStore('tasks');
+    var index = store.index('by_end_date');
+    var request = index.openCursor(IDBKeyRange.lowerBound(RunningMan.utils.dateFormat(new Date(), 'yyyy-MM-dd')));
+    var that = this;
+    request.onsuccess = function success() {
+      var cursor = request.result;
+      if (cursor) {
+        console.log(cursor.value);
+        if (cursor.value.end_date > RunningMan.utils.dateFormat(new Date(), 'yyyy-MM-dd')
+          || (cursor.value.end_date === RunningMan.utils.dateFormat(new Date(), 'yyyy-MM-dd')
+            && cursor.value.end_time >= RunningMan.utils.dateFormat(new Date(), 'hh:mm'))) {
+          cb(that.extend({ $id: cursor.primaryKey }, cursor.value));
+        }
+        cursor.continue();
+      } else if (ok){
+        ok();
+      }
     };
   },
 
