@@ -7,7 +7,7 @@ RunningMan.services = {
           id: obj.$id,
           title: obj.title,
           text: obj.detail,
-          priority: 5,
+          priority: 5, // android.support.v4.app.NotificationManagerCompat.IMPORTANCE_MAX
           at: new Date(
             parseInt(obj.end_date.substr(0, 4), 10),
             parseInt(obj.end_date.substr(5, 2), 10) - 1,
